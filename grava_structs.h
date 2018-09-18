@@ -38,4 +38,23 @@
 
 int grava_structs(int nstructs, void *valores, char *campos, char ord, char *arquivo);
 
+/* FUNCAO: dump_structs
+ * 
+ * EXIBE: - uma linha indicando a orientacao do arquivo ('L' ou 'B')
+ *        - uma linha indicando o numero de structs armazenadas 
+ *          no arquio (decimal)
+ *        - dump dos valores armazenados, em hexadecimal, com um 
+ *          campo por linha. cada byte deve ser exibido em hexa,
+ *          com dois digitos. deve haver um unico espaco entre
+ *          dois bytes
+ *        - uma linha separadora no inicio de cada struct (caractere '*')          
+ *
+ * RECEBE: char *arquivo - o nome do arquivo a ser lido
+ *
+ * RETORNA: void
+ *
+ * NAO HA VALIDACAO DOS PARAMETROS RECEBIDOS!
+ */
+
+void dump_structs(char *arquivo);
 
