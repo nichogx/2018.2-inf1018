@@ -23,9 +23,30 @@
 /* FUNCOES EXPORTADAS PELO MODULO */
 int grava_structs(int nstructs, void *valores, char *campos, char ord, char *arquivo)
 {
-	for (; *campos; campos++) {
-		// fazer coisas para cada campo
+	FILE *arq = fopen(arquivo, "wb");
+	unsigned char qtCampos = 0;
+	char *pCampos = campos;
+
+	for (; *pCampos; pCampos++, qtCampos++); /* conta campos */
+	pCampos = campos; /* reseta pCampos */
+	
+	if (arq == NULL) {
+		return -1;
 	}
+
+	fwrite(&nstructs, 1, 1, arq); /* escreve no arquivo o byte menos significativo de nstructs */
+	if (ord == 'L') {
+		unsigned char segByte = 0x80; /* seta o bit mais significativo para 1 */
+		segByte = segByte | qtCampos;
+		fwrite(&segByte, 1, 1, arq);
+	}
+	
+	for (; *pCampos; pCampos++) {
+		if (*pCampos == 'c');
+	}
+	
+	fclose(arq);
+	return 0;
 }
 
 /* FUNCOES ENCAPSULADAS NO MODULO */
