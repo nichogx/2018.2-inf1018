@@ -7,6 +7,7 @@
  *
  * Versionamento:
  * Autor(es)   Versao    Data       Descricao
+ * ngx         0.20      2018-09-20 Gravacao do cabecalho dos arquivos
  * ngx         0.10      2018-09-18 Inicial
  *
  */
