@@ -34,11 +34,11 @@ int grava_structs(int nstructs, void *valores, char *campos, char ord, char *arq
 		return -1;
 	}
 
-	fwrite(&nstructs, 1, 1, arq); /* escreve no arquivo o byte menos significativo de nstructs */
+	fputc(nstructs, arq); /* escreve no arquivo o byte menos significativo de nstructs */
 	if (ord == 'L') {
 		unsigned char segByte = 0x80; /* seta o bit mais significativo para 1 */
 		segByte = segByte | qtCampos;
-		fwrite(&segByte, 1, 1, arq);
+		fputc(segByte, arq);
 	}
 	
 	for (; *pCampos; pCampos++) {
