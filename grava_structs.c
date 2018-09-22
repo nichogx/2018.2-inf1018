@@ -29,14 +29,14 @@ int grava_structs(int nstructs, void *valores, char *campos, char ord, char *arq
 {
 	FILE *arq = fopen(arquivo, "wb");
 	
-	unsigned char qtCampos = 0;
-	unsigned char segByte  = 0; /* inicializado como sendo big endian */
+	unsigned char qtCampos = 0; /* quantidade de campos da struct */
+	unsigned char segByte  = 0; /* segundo byte, inicializado como sendo big endian */
 	unsigned char maiorCampo = leCampo(*campos);
 	
-	char *pCampos = campos;
-	char *pVals = valores;
+	char *pCampos = campos; /* ponteiro para a string de campos */
+	char *pVals = valores; /* ponteiro para o array de structs */
 	
-	unsigned char atual = 0;
+	unsigned char atual = 0; /*  */
 	int contAtual = 0;
 	
 	int i;
@@ -106,8 +106,27 @@ int grava_structs(int nstructs, void *valores, char *campos, char ord, char *arq
 
 void dump_structs(char *arquivo)
 {
+	unsigned char numStruct; /* número de structs da array do arquivo */
+	unsigned char endianType; /* little ou big endian */
+	unsigned char qtCampos; /* quantidade de campos da struct original */
+	
 	FILE *arq = fopen(arquivo,"rb");
-	//int linha = string2num(fgetc(arq));
+	
+	fread(&numStruct, sizeof(char), 1, arq); /* leu número de structs */
+	
+	
+	fread(&qtCampos, sizeof(char), 1, arq); /* leu byte do tipo endian & número de campos */
+	endianType = qtCampos >> 7;
+	qtCampos = (qtCampos | 0x80) - 0x80; /* retirou o bit indicador de tipo endian */
+	
+	if(endianType == 0) /* print para tipo endian */
+		printf("B");
+	else
+		printf("L")
+	
+	printf("%d",numStruct); /* print para tamanho do array */
+	
+	
 	
 	fclose(arq);
 }
