@@ -22,6 +22,7 @@
 /* CABECALHO DAS FUNCOES ENCAPSULADAS NO MODULO */
 
 int leCampo(char c);
+int power(int bas, int exp);
 
 /* FUNCOES EXPORTADAS PELO MODULO */
 int grava_structs(int nstructs, void *valores, char *campos, char ord, char *arquivo)
@@ -30,8 +31,10 @@ int grava_structs(int nstructs, void *valores, char *campos, char ord, char *arq
 	
 	unsigned char qtCampos = 0;
 	unsigned char segByte  = 0; /* inicializado como sendo big endian */
+	unsigned char maiorCampo = leCampo(*campos);
 	
 	char *pCampos = campos;
+	char *pVals = valores;
 	
 	unsigned char atual = 0;
 	int contAtual = 0;
@@ -40,7 +43,12 @@ int grava_structs(int nstructs, void *valores, char *campos, char ord, char *arq
 	
 	if (arq == NULL) return -1;
 	
-	for (pCampos = campos; *pCampos; pCampos++, qtCampos++); /* conta campos */
+	for (pCampos = campos; *pCampos; pCampos++, qtCampos++) { /* conta campos e acha o maior */
+		unsigned char campAt = leCampo(*pCampos);
+		if (campAt > maiorCampo) {
+			maiorCampo = campAt;
+		}
+	}
 
 	fwrite(&nstructs, 1, 1, arq); /* escreve no arquivo o byte menos significativo de nstructs */
 	                              /* assume que nstructs <= 255 (argumentos passados corretamente) */
@@ -65,8 +73,25 @@ int grava_structs(int nstructs, void *valores, char *campos, char ord, char *arq
 	}
 	
 	for (i = 0; i < nstructs; i++) {
+		unsigned char valAtual = 0;
 		for (pCampos = campos; *pCampos; pCampos++) {
+			unsigned char campAtual = leCampo(*pCampos);
+			unsigned char tam = power(2, campAtual);
+			printf("%c %d %d %d\n", *pCampos, campAtual, tam, valAtual);
 			
+			while (valAtual % tam) { /* anda pelo padding */
+				pVals++;
+				valAtual++;
+				printf("%d\n", valAtual);
+			}
+			
+			fwrite(pVals, tam, 1, arq);
+			pVals += tam;
+			valAtual += tam;
+		}
+		while (valAtual % power(2, maiorCampo)) { /* anda pelo padding */
+			pVals++;
+			valAtual++;
 		}
 	}
 	
@@ -95,4 +120,13 @@ int leCampo(char c) {
 		return 3;
 	
 	return 0;
+}
+
+int power(int bas, int exp) {
+	int i, res = 1;
+	
+	for (i = 0; i < exp; i++)
+		res *= bas;
+	
+	return res;
 }
