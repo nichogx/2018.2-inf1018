@@ -120,11 +120,11 @@ void dump_structs(char *arquivo)
 	qtCampos = (qtCampos | 0x80) - 0x80; /* retirou o bit indicador de tipo endian */
 	
 	if(endianType == 0) /* print para tipo endian */
-		printf("B");
+		printf("B\n");
 	else
-		printf("L");
+		printf("L\n");
 	
-	printf("%d",numStruct); /* print para tamanho do array */
+	printf("%d\n",numStruct); /* print para tamanho do array */
 	
 	
 	
