@@ -21,24 +21,29 @@
 
 /* CABECALHO DAS FUNCOES ENCAPSULADAS NO MODULO */
 
+int leCampo(char c);
+
 /* FUNCOES EXPORTADAS PELO MODULO */
 int grava_structs(int nstructs, void *valores, char *campos, char ord, char *arquivo)
 {
 	FILE *arq = fopen(arquivo, "wb");
 	
 	unsigned char qtCampos = 0;
-	unsigned char segByte  = 0;
+	unsigned char segByte  = 0; /* inicializado como sendo big endian */
 	
 	char *pCampos = campos;
 	
 	unsigned char atual = 0;
 	int contAtual = 0;
 	
+	int i;
+	
 	if (arq == NULL) return -1;
 	
 	for (pCampos = campos; *pCampos; pCampos++, qtCampos++); /* conta campos */
 
 	fwrite(&nstructs, 1, 1, arq); /* escreve no arquivo o byte menos significativo de nstructs */
+	                              /* assume que nstructs <= 255 (argumentos passados corretamente) */
 	if (ord == 'L') {
 		segByte = 0x80; /* seta o bit mais significativo para 1 */
 	}
@@ -46,30 +51,23 @@ int grava_structs(int nstructs, void *valores, char *campos, char ord, char *arq
 	fwrite(&segByte, 1, 1, arq);
 	
 	for (pCampos = campos; *pCampos; pCampos++) {
-		unsigned char aColocar = 0;
-		if (*pCampos == 's') {
-			aColocar = 1;
-		} else if (*pCampos == 'i') {
-			aColocar = 2;
-		} else if (*pCampos == 'l') {
-			aColocar = 3;
-		}
-		
 		if (contAtual > 3) {
 			fwrite(&atual, 1, 1, arq);
 			contAtual = 0;
 			atual = 0;
 		}
 		atual = atual << 2;
-		atual = aColocar | atual;
+		atual = leCampo(*pCampos) | atual;
 		contAtual++;
 	} if (contAtual) { /* completa com zeros se ainda faltar */
 		atual = atual << ((4 - contAtual) * 2);
 		fwrite(&atual, 1, 1, arq);
 	}
 	
-	for (pCampos = campos; *pCampos; pCampos++) {
-		/* aqui preencher com os dados das structs */
+	for (i = 0; i < nstructs; i++) {
+		for (pCampos = campos; *pCampos; pCampos++) {
+			
+		}
 	}
 	
 	fclose(arq);
@@ -79,8 +77,22 @@ int grava_structs(int nstructs, void *valores, char *campos, char ord, char *arq
 void dump_structs(char *arquivo)
 {
 	FILE *arq = fopen(arquivo,"rb");
-	int linha = string2num(fgetc(arq));
+	//int linha = string2num(fgetc(arq));
 	
+	fclose(arq);
 }
 
 /* FUNCOES ENCAPSULADAS NO MODULO */
+
+int leCampo(char c) {
+	if (c == 's')
+		return 1;
+	
+	if (c == 'i')
+		return 2;
+	
+	if (c == 'l')
+		return 3;
+	
+	return 0;
+}
