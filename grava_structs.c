@@ -83,7 +83,14 @@ int grava_structs(int nstructs, void *valores, char *campos, char ord, char *arq
 				valAtual++;
 			}
 			
-			fwrite(pVals, tam, 1, arq);
+			if (0x80 & segByte) { /* eh little endian */
+				fwrite(pVals, tam, 1, arq);
+			} else { /* big endian */
+				int j = tam;
+				for (; j > 0; j--)
+					fwrite(pVals + j - 1, 1, 1, arq);
+			}
+			
 			pVals += tam;
 			valAtual += tam;
 		}

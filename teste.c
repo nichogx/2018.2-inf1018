@@ -8,7 +8,7 @@ int main(void) {
 		char c1;
 		short s2;
 	};
-	struct s exemplo[10];
+	struct s exemplo[3];
 	
 	exemplo[0].i1 = 0x01020304;
 	exemplo[0].l1 = 0x0102030405060708;
@@ -26,7 +26,7 @@ int main(void) {
 	exemplo[2].c1 = 0xcc;
 	exemplo[2].s2 = 0xdddd;
 	
-	grava_structs(10, exemplo, "ilscs", 'L', "saida1");
+	grava_structs(3, exemplo, "ilscs", 'L', "saida1");
 
 	return 0;
 }
