@@ -122,7 +122,7 @@ void dump_structs(char *arquivo)
 	if(endianType == 0) /* print para tipo endian */
 		printf("B");
 	else
-		printf("L")
+		printf("L");
 	
 	printf("%d",numStruct); /* print para tamanho do array */
 	
