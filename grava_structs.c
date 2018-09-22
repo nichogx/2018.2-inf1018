@@ -76,4 +76,11 @@ int grava_structs(int nstructs, void *valores, char *campos, char ord, char *arq
 	return 0;
 }
 
+void dump_structs(char *arquivo)
+{
+	FILE *arq = fopen(arquivo,"rb");
+	int linha = string2num(fgetc(arq));
+	
+}
+
 /* FUNCOES ENCAPSULADAS NO MODULO */
