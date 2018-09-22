@@ -15,6 +15,16 @@ int main(void) {
 	exemplo[0].s1 = 0x0102;
 	exemplo[0].c1 = 0xff;
 	exemplo[0].s2 = 0xaabb;
+	exemplo[1].i1 = 0x01020304;
+	exemplo[1].l1 = 0x0102030405060708;
+	exemplo[1].s1 = 0x0102;
+	exemplo[1].c1 = 0xff;
+	exemplo[1].s2 = 0xaabb;
+	exemplo[2].i1 = 0xffffffff;
+	exemplo[2].l1 = 0xaaaaaaaaaaaaaaaa;
+	exemplo[2].s1 = 0xbbbb;
+	exemplo[2].c1 = 0xcc;
+	exemplo[2].s2 = 0xdddd;
 	
 	grava_structs(10, exemplo, "ilscs", 'L', "saida1");
 

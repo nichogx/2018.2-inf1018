@@ -77,12 +77,10 @@ int grava_structs(int nstructs, void *valores, char *campos, char ord, char *arq
 		for (pCampos = campos; *pCampos; pCampos++) {
 			unsigned char campAtual = leCampo(*pCampos);
 			unsigned char tam = power(2, campAtual);
-			printf("%c %d %d %d\n", *pCampos, campAtual, tam, valAtual);
 			
 			while (valAtual % tam) { /* anda pelo padding */
 				pVals++;
 				valAtual++;
-				printf("%d\n", valAtual);
 			}
 			
 			fwrite(pVals, tam, 1, arq);
