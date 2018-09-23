@@ -5,11 +5,13 @@
  * Arquivo: grava_structs.c
  * 
  * Autores:
- * ngx - Nicholas Godoy
  * alx - Alexandre Augusto
+ * ngx - Nicholas Godoy
  *
  * Versionamento:
  * Autor(es)   Versao    Data       Descricao
+ * alx, ngx    0.30      2018-09-23 Continuacao do desenvolvimento - grava_structs
+ *                                  funciona como esperado para LEndian e BEndian.
  * ngx         0.20      2018-09-20 Gravacao do cabecalho dos arquivos
  * ngx         0.10      2018-09-18 Inicial
  *
