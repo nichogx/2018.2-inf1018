@@ -109,23 +109,28 @@ int grava_structs(int nstructs, void *valores, char *campos, char ord, char *arq
 void dump_structs(char *arquivo)
 {
 
-	
 	FILE *arq = fopen(arquivo,"rb");
+
+	int i = 0; /* índice para o vetor de campos */
 	
 	unsigned char numStruct; /* número de structs da array do arquivo */
 	unsigned char endianType; /* little ou big endian */
 	unsigned char qtCampos; /* quantidade de campos da struct original */
 	
-	unsigned char tpCampo[127]; /* ponteiro para tipo de campo */
-	unsigned char *pCmp; /* ponteiro para o primeiro elemento do array de campos */
-	
-	pCmp = &tpCampo[0];
-	
+	unsigned char *tpCampo; /* vetor com os campos da struct */
+		
 	fread(&numStruct, sizeof(char), 1, arq); /* leu número de structs */
 	fread(&qtCampos, sizeof(char), 1, arq); /* leu byte do tipo endian & número de campos */
 	
 	endianType = qtCampos >> 7;
 	qtCampos = (qtCampos | 0x80) - 0x80; /* retirou o bit indicador de tipo endian */
+	
+	tpCampo = malloc((qtCampos+1)*sizeof(char)); /* define quantidade de campos para o array */
+	if(tpCampo == NULL) /* Quero conversar com o professor sobre essas linhas (128-133) */
+	{
+		printf("Errou de memoria.")
+		return;
+	}
 	
 	if(endianType) /* print para tipo endian */
 		printf("L\n");
@@ -133,36 +138,35 @@ void dump_structs(char *arquivo)
 		printf("B\n");
 	
 	printf("%d\n", numStruct); /* print para tamanho do array */
-		
-	while(qtCampos) {/* grava em tpCampo os campos da struct */
+	
+	while(i != qtCampos) {/* grava em tpCampo os campos da struct */
 		int j;
 		unsigned char campos = 0x00; /* byte com campos */
 				
 		fread(&campos, sizeof(char), 1, arq);
 		
-		for(j = 3; (j >= 0) && qtCampos; j--) {/* i: indice do array de campos */
-			unsigned char temp = campos >> (2*j) & 0x03;
+		
+		for(j = 3; (j >= 0) && (i != qtCampos); j--) {/* grava os 4 campos armazenados em um byte até a quantidade de campos ter terminado ou o byte terminar */
+			unsigned char temp = campos >> (2*j) & 0x03; /* retirar apos testes */
 			if (temp == 0)
-				*pCmp = 'c';
+				tpCampo[i] = 'c';
 			else if (temp == 1)
-				*pCmp = 's';
+				tpCampo[i] = 's';
 			else if (temp == 2)
-				*pCmp = 'i';
+				tpCampo[i] = 'i';
 			else
-				*pCmp = 'l';
+				tpCampo[i] = 'l';
 			
 			printf("%d\n", temp);
 			printf("%s\n", tpCampo);
-			pCmp++;
-			qtCampos--;
+			i++;
 		}
 	}
-	pCmp = '\0';
+	tpCampo[i] = '\0';
 	printf("%s\n", tpCampo);
 	/* Considerando que a parte anterior funcione: */
 	
-	
-	
+	free(tpCampo);
 	fclose(arq);
 }
 
