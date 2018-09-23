@@ -10,6 +10,8 @@
  *
  * Versionamento:
  * Autor(es)   Versao    Data       Descricao
+ * ngx, alx    0.30      2018-09-22 Continuacao do desenvolvimento - grava_structs funciona
+ *                                  como esperado, tanto para LEndian quanto para BEndian
  * ngx         0.20      2018-09-20 Gravacao do cabecalho dos arquivos
  * ngx         0.10      2018-09-18 Inicial
  *
