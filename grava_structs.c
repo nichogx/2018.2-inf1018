@@ -116,7 +116,7 @@ void dump_structs(char *arquivo)
 	unsigned char endianType; /* little ou big endian */
 	unsigned char qtCampos; /* quantidade de campos da struct original */
 	
-	char *tpCampo[127]; /* ponteiro para tipo de campo */
+	unsigned char *tpCampo[127]; /* ponteiro para tipo de campo */
 	
 	
 	fread(&numStruct, sizeof(char), 1, arq); /* leu número de structs */
@@ -132,23 +132,20 @@ void dump_structs(char *arquivo)
 	
 	printf("%d\n", numStruct); /* print para tamanho do array */
 		
-	while(qtCampos) /* grava em tpCampo os campos da struct */
-	{
+	while(qtCampos) {/* grava em tpCampo os campos da struct */
 		int j;
 		unsigned char campos = 0x00; /* byte com campos */
 		fread(&campos, sizeof(char), 1, arq);
 		
-		for(j = 4; (j > 0) && qtCampos; j--) /* i: indice do array de campos */
-		{
-			switch((campos >> 2*(j-1)) & 0x03)
-			{
+		for(j = 3; (j >= 0) && qtCampos; j--) {/* i: indice do array de campos */
+			switch(campos >> (2*j) & 0x03) {
 				case 0: tpCampo[i] = 'c'; break;
 				case 1: tpCampo[i] = 's'; break;
 				case 2: tpCampo[i] = 'i'; break;
 				case 3: tpCampo[i] = 'l'; break;
 			}
-			printf("%d\n", (campos >> 2*(j-1)) & 0x03);
-			campos = campos >> 2;
+			printf("%d\n", campos >> (2*j) & 0x03);
+			
 			printf("%s\n", tpCampo);
 			qtCampos--;
 			i++;
