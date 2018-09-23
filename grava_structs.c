@@ -138,22 +138,28 @@ void dump_structs(char *arquivo)
 		fread(&campos, sizeof(char), 1, arq);
 		
 		for(j = 3; (j >= 0) && qtCampos; j--) {/* i: indice do array de campos */
-			switch(campos >> (2*j) & 0x03) {
-				case 0: tpCampo[i] = 'c'; break;
-				case 1: tpCampo[i] = 's'; break;
-				case 2: tpCampo[i] = 'i'; break;
-				case 3: tpCampo[i] = 'l'; break;
-			}
-			printf("%d\n", campos >> (2*j) & 0x03);
+			unsigned char temp = campos >> (2*j) & 0x03;
+			if (temp == 0)
+				tpCampo[i] = 'c';
+			else if (temp == 1)
+				tpCampo[i] = 's';
+			else if (temp == 2)
+				tpCampo[i] = 'i';
+			else
+				tpCampo[i] = 'l';
+			
+			printf("%d\n", temp);
 			
 			printf("%s\n", tpCampo);
 			qtCampos--;
 			i++;
 		}
-		tpCampo[i] = '\0';
-		
-		//printf("%s\n", tpCampo);
 	}
+	tpCampo[i] = '\0';
+	
+	/* Considerando que a parte anterior funcione: */
+	
+	
 	
 	fclose(arq);
 }
