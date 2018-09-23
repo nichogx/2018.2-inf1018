@@ -106,27 +106,57 @@ int grava_structs(int nstructs, void *valores, char *campos, char ord, char *arq
 
 void dump_structs(char *arquivo)
 {
+
+	
+	FILE *arq = fopen(arquivo,"rb");
+
+	int i = 0;
+	
 	unsigned char numStruct; /* número de structs da array do arquivo */
 	unsigned char endianType; /* little ou big endian */
 	unsigned char qtCampos; /* quantidade de campos da struct original */
 	
-	FILE *arq = fopen(arquivo,"rb");
+	char *tpCampo[127]; /* ponteiro para tipo de campo */
+	
 	
 	fread(&numStruct, sizeof(char), 1, arq); /* leu número de structs */
-	
-	
 	fread(&qtCampos, sizeof(char), 1, arq); /* leu byte do tipo endian & número de campos */
+	
 	endianType = qtCampos >> 7;
 	qtCampos = (qtCampos | 0x80) - 0x80; /* retirou o bit indicador de tipo endian */
 	
-	if(endianType == 0) /* print para tipo endian */
-		printf("B\n");
-	else
+	if(endianType) /* print para tipo endian */
 		printf("L\n");
+	else
+		printf("B\n");
 	
-	printf("%d\n",numStruct); /* print para tamanho do array */
-	
-	
+	printf("%d\n", numStruct); /* print para tamanho do array */
+		
+	while(qtCampos) /* grava em tpCampo os campos da struct */
+	{
+		int j;
+		unsigned char campos = 0x00; /* byte com campos */
+		fread(&campos, sizeof(char), 1, arq);
+		
+		for(j = 4; (j > 0) && qtCampos; j--) /* i: indice do array de campos */
+		{
+			switch((campos >> 2*(j-1)) & 0x03)
+			{
+				case 0: tpCampo[i] = 'c'; break;
+				case 1: tpCampo[i] = 's'; break;
+				case 2: tpCampo[i] = 'i'; break;
+				case 3: tpCampo[i] = 'l'; break;
+			}
+			printf("%d\n", (campos >> 2*(j-1)) & 0x03);
+			campos = campos >> 2;
+			printf("%s\n", tpCampo);
+			qtCampos--;
+			i++;
+		}
+		tpCampo[i] = '\0';
+		
+		//printf("%s\n", tpCampo);
+	}
 	
 	fclose(arq);
 }
