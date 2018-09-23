@@ -128,7 +128,7 @@ void dump_structs(char *arquivo)
 	tpCampo = malloc((qtCampos+1)*sizeof(char)); /* define quantidade de campos para o array */
 	if(tpCampo == NULL) /* Quero conversar com o professor sobre essas linhas (128-133) */
 	{
-		printf("Errou de memoria.")
+		printf("Errou de memoria.");
 		return;
 	}
 	
@@ -141,30 +141,44 @@ void dump_structs(char *arquivo)
 	
 	while(i != qtCampos) {/* grava em tpCampo os campos da struct */
 		int j;
-		unsigned char campos = 0x00; /* byte com campos */
+		unsigned char campos = 0; /* byte com campos */
 				
 		fread(&campos, sizeof(char), 1, arq);
 		
 		
 		for(j = 3; (j >= 0) && (i != qtCampos); j--) {/* grava os 4 campos armazenados em um byte até a quantidade de campos ter terminado ou o byte terminar */
-			unsigned char temp = campos >> (2*j) & 0x03; /* retirar apos testes */
-			if (temp == 0)
-				tpCampo[i] = 'c';
-			else if (temp == 1)
-				tpCampo[i] = 's';
-			else if (temp == 2)
-				tpCampo[i] = 'i';
-			else
-				tpCampo[i] = 'l';
 			
-			printf("%d\n", temp);
-			printf("%s\n", tpCampo);
+			switch(campos >> (2*j) & 0x03) { /* identifica o campo do conjunto de 2 bits verificado */
+			case 0:	tpCampo[i] = 'c'; break;
+			case 1:	tpCampo[i] = 's'; break;
+			case 2:	tpCampo[i] = 'i'; break;
+			case 3: tpCampo[i] = 'l'; break;
+			}
 			i++;
 		}
 	}
 	tpCampo[i] = '\0';
 	printf("%s\n", tpCampo);
-	/* Considerando que a parte anterior funcione: */
+	
+	/* Considerando que a parte anterior funcione */ /* Funcionou hahahah */
+	
+	while(numStruct) /* Para cada struct, printa os campos das structs desconsiderando paddings */
+	{
+		printf("*\n");
+		for(i = 0; i < qtCampos; i++)
+		{
+			int j = power(2,leCampo(tpCampo[i]));
+			while(j)
+			{
+				unsigned char byte;
+				fread(&byte, sizeof(char), 1, arq);
+				printf("%d ", byte);
+				j--;
+			}
+			printf("\n");
+		}
+		numStruct--;
+	}
 	
 	free(tpCampo);
 	fclose(arq);
