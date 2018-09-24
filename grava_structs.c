@@ -10,6 +10,9 @@
  *
  * Versionamento:
  * Autor(es)   Versao    Data       Descricao
+ * alx         0.40      2018-09-24 Continuacao do desenvolvimento - dump_structs
+ *                                  imprime o tipo endian, o tamanho do array de
+ *                                  strucs e os campos das structs como esperado.
  * alx, ngx    0.30      2018-09-23 Continuacao do desenvolvimento - grava_structs
  *                                  funciona como esperado para LEndian e BEndian.
  * ngx         0.20      2018-09-20 Gravacao do cabecalho dos arquivos
@@ -158,21 +161,25 @@ void dump_structs(char *arquivo)
 		}
 	}
 	tpCampo[i] = '\0';
-	printf("%s\n", tpCampo);
+	printf("%s\n", tpCampo); /* retirar apos terminar os testes */
 	
 	/* Considerando que a parte anterior funcione */ /* Funcionou hahahah */
 	
 	while(numStruct) /* Para cada struct, printa os campos das structs desconsiderando paddings */
 	{
 		printf("*\n");
-		for(i = 0; i < qtCampos; i++)
+		for(i = 0; i < qtCampos; i++) /* Para cada campo, verifica o seu tipo */
 		{
 			int j = power(2,leCampo(tpCampo[i]));
-			while(j)
+			while(j) /* printa todos os bytes de um campo */
 			{
 				unsigned char byte;
 				fread(&byte, sizeof(char), 1, arq);
-				printf("%d ", byte);
+				printf("%02x", byte);
+				
+				if(j!=1)
+					printf(" ");
+				
 				j--;
 			}
 			printf("\n");
