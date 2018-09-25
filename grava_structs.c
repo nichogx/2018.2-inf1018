@@ -126,7 +126,7 @@ void dump_structs(char *arquivo)
 	fread(&qtCampos, sizeof(char), 1, arq); /* leu byte do tipo endian & número de campos */
 	
 	endianType = qtCampos >> 7;
-	qtCampos = (qtCampos | 0x80) - 0x80; /* retirou o bit indicador de tipo endian */
+	qtCampos = qtCampos & 0x7F; /* retirou o bit indicador de tipo endian */
 	
 	tpCampo = malloc((qtCampos+1)*sizeof(char)); /* define quantidade de campos para o array */
 	if(tpCampo == NULL) /* Quero conversar com o professor sobre essas linhas (128-133) */
