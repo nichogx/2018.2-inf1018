@@ -2,3 +2,34 @@ INTEGRANTES:
 Nicholas de Godoy Xavier        1710878  3WA
 Alexandre Augusto Poggio Heine  1711905  3WA
 
+FUNCIONAMENTO:
+	As duas funções funcionam como esperado em todos os testes realizados.
+
+TESTES:
+	Todos os testes foram realizados tanto pra Little Endian quanto para Big Endian.
+	Os testes realizados foram:
+	- Teste com vetor de 3 structs, da struct dada no enunciado.
+		- Esse foi o teste inicial.
+	- Teste com vetor de 255 structs, da struct dada no enunciado.
+		- Esse teste verifica que funciona com o número máximo de structs.
+		- Foram preenchidas as duas primeiras e a última manualmente, com dados
+		  que possam ser reconhecidos.
+		- Todas as outras foram preenchidas da forma:
+		    exemplo[i].i1 = 0x01010101;
+		    exemplo[i].l1 = 0x0101010101010101;
+		    exemplo[i].s1 = 0x0101;
+		    exemplo[i].c1 = 0x01;
+		    exemplo[i].s2 = 0x0101;
+	- Teste com vetor de 3 structs com campos "ll"
+		- Esse teste verifica que funciona com uma struct somente de longs.
+	- Teste com vetor de 3 structs com campos "ii"
+		- Esse teste verifica que funciona com uma struct somente de ints.
+	- Teste com vetor de 3 structs com campos "ss"
+		- Esse teste verifica que funciona com uma struct somente de shorts.
+	- Teste com vetor de 3 structs com campos "cc"
+		- Esse teste verifica que funciona com uma struct somente de chars.
+	- Teste com vetor de 2 structs com campos "lclcslsscil"
+		- Esse teste verifica que funciona com uma struct com campos misturados.
+	- Teste com vetor de 2 structs com campos "sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss"
+		- Esse teste verifica que funciona com uma struct de número máximo de campos (127).
+
