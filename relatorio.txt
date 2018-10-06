@@ -1,4 +1,4 @@
-INTEGRANTES:
+﻿INTEGRANTES:
 Nicholas de Godoy Xavier        1710878  3WA
 Alexandre Augusto Poggio Heine  1711905  3WA
 
@@ -32,3 +32,9 @@ TESTES:
 		- Esse teste verifica que as funções funcionam com uma struct com campos misturados.
 	- Teste com vetor de 2 structs com 127 shorts
 		- Esse teste verifica que as funções funcionam com uma struct de número máximo de campos (127).
+	- Teste com vetor de 255 structs com 127 shorts
+		- Esse teste verifica que as funções funcionam com um vetor com o número máximo de structs (255)
+		  com o número máximo de campos (127).
+	- Teste com vetor de 1 struct com 1 char
+		- Esse teste verifica que as funções funcionam com um vetor com o número mínimo de structs (1)
+		  com o número mínimo de campos (1).
