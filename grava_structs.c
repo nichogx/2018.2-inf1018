@@ -120,18 +120,18 @@ void dump_structs(char *arquivo)
 	unsigned char endianType; /* little ou big endian */
 	unsigned char qtCampos; /* quantidade de campos da struct original */
 	
-	unsigned char *tpCampo; /* vetor com os campos da struct */
-		
+	unsigned char *vetCampo; /* vetor com os campos da struct */
+	
 	fread(&numStruct, sizeof(char), 1, arq); /* leu número de structs */
 	fread(&qtCampos, sizeof(char), 1, arq); /* leu byte do tipo endian & número de campos */
 	
 	endianType = qtCampos >> 7;
 	qtCampos = qtCampos & 0x7F; /* retirou o bit indicador de tipo endian */
 	
-	tpCampo = malloc((qtCampos+1)*sizeof(char)); /* define quantidade de campos para o array */
-	if(tpCampo == NULL) /* Quero conversar com o professor sobre essas linhas (128-133) */
+	vetCampo = (unsigned char *) malloc((qtCampos+1)*sizeof(char)); /* define quantidade de campos para o array */
+	if(vetCampo == NULL) /* Quero conversar com o professor sobre essas linhas (128-133) */
 	{
-		printf("Errou de memoria.");
+		printf("Erro de memoria.");
 		return;
 	}
 	
@@ -145,49 +145,46 @@ void dump_structs(char *arquivo)
 	while(i != qtCampos) {/* grava em tpCampo os campos da struct */
 		int j;
 		unsigned char campos = 0; /* byte com campos */
-				
-		fread(&campos, sizeof(char), 1, arq);
 		
+		fread(&campos, sizeof(char), 1, arq);
 		
 		for(j = 3; (j >= 0) && (i != qtCampos); j--) {/* grava os 4 campos armazenados em um byte até a quantidade de campos ter terminado ou o byte terminar */
 			
 			switch(campos >> (2*j) & 0x03) { /* identifica o campo do conjunto de 2 bits verificado */
-			case 0:	tpCampo[i] = 'c'; break;
-			case 1:	tpCampo[i] = 's'; break;
-			case 2:	tpCampo[i] = 'i'; break;
-			case 3: tpCampo[i] = 'l'; break;
+			case 0:	vetCampo[i] = 'c'; break;
+			case 1:	vetCampo[i] = 's'; break;
+			case 2:	vetCampo[i] = 'i'; break;
+			case 3: vetCampo[i] = 'l'; break;
 			}
 			i++;
 		}
 	}
-	tpCampo[i] = '\0';
-	printf("%s\n", tpCampo); /* retirar apos terminar os testes */
+	vetCampo[i] = '\0';
 	
-	/* Considerando que a parte anterior funcione */ /* Funcionou hahahah */
+	/* Considerando que a parte anterior funcione */
 	
 	while(numStruct) /* Para cada struct, printa os campos das structs desconsiderando paddings */
 	{
 		printf("*\n");
 		for(i = 0; i < qtCampos; i++) /* Para cada campo, verifica o seu tipo */
 		{
-			int j = power(2,leCampo(tpCampo[i]));
-			while(j) /* printa todos os bytes de um campo */
+			int j;
+			
+			for(j = power(2,leCampo(vetCampo[i])); j != 0; j--) /* printa todos os bytes de um campo */
 			{
 				unsigned char byte;
 				fread(&byte, sizeof(char), 1, arq);
 				printf("%02x", byte);
 				
-				if(j!=1)
+				if(j != 1)
 					printf(" ");
-				
-				j--;
 			}
 			printf("\n");
 		}
 		numStruct--;
 	}
 	
-	free(tpCampo);
+	free(vetCampo);
 	fclose(arq);
 }
 
