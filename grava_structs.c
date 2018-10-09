@@ -1,4 +1,4 @@
-/* Nicholas de Godoy Xavier 1710878 3WA */
+/* Nicholas de Godoy Xavier       1710878 3WA */
 /* Alexandre Augusto Poggio Heine 1711905 3WA */
 
 /* Modulo de Implementacao: grava_structs
