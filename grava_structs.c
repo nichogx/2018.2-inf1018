@@ -10,6 +10,7 @@
  *
  * Versionamento:
  * Autor(es)   Versao    Data       Descricao
+ * ngx         0.50      2018-10-09 Limpeza do código e comentários
  * alx         0.40      2018-09-24 Continuacao do desenvolvimento - dump_structs
  *                                  imprime o tipo endian, o tamanho do array de
  *                                  strucs e os campos das structs como esperado.
@@ -34,17 +35,12 @@ int grava_structs(int nstructs, void *valores, char *campos, char ord, char *arq
 {
 	FILE *arq = fopen(arquivo, "wb");
 	
-	unsigned char qtCampos = 0; /* quantidade de campos da struct */
+	unsigned char qtCampos = 0;
 	unsigned char segByte  = 0; /* segundo byte, inicializado como sendo big endian */
 	unsigned char maiorCampo = leCampo(*campos);
 	
 	char *pCampos = campos; /* ponteiro para a string de campos */
 	char *pVals = valores; /* ponteiro para o array de structs */
-	
-	unsigned char atual = 0; /*  */
-	int contAtual = 0;
-	
-	int i;
 	
 	if (arq == NULL) return -1;
 	
@@ -63,11 +59,13 @@ int grava_structs(int nstructs, void *valores, char *campos, char ord, char *arq
 	segByte = segByte | qtCampos; /* assume que qtCampos <= 127 && qtCampos >= 0 (argumentos passados corretamente) */
 	fwrite(&segByte, 1, 1, arq);
 	
+	unsigned char atual = 0; /* byte atual a ser escrito */
+	int contAtual = 0; /* contagem de quantos campos já estão em atual */
 	for (pCampos = campos; *pCampos; pCampos++) {
-		if (contAtual > 3) {
+		if (contAtual > 3) { /* escreve e reseta */
 			fwrite(&atual, 1, 1, arq);
-			contAtual = 0;
-			atual = 0;
+			contAtual = 0; /* reseta */
+			atual = 0; /* reseta */
 		}
 		atual = atual << 2;
 		atual = leCampo(*pCampos) | atual;
@@ -77,7 +75,8 @@ int grava_structs(int nstructs, void *valores, char *campos, char ord, char *arq
 		fwrite(&atual, 1, 1, arq);
 	}
 	
-	for (i = 0; i < nstructs; i++) {
+	for (int i = 0; i < nstructs; i++) {
+		/* variavel para checar o byte atual, para ver padding e multiplos */
 		unsigned char valAtual = 0;
 		for (pCampos = campos; *pCampos; pCampos++) {
 			unsigned char campAtual = leCampo(*pCampos);
@@ -91,8 +90,7 @@ int grava_structs(int nstructs, void *valores, char *campos, char ord, char *arq
 			if (0x80 & segByte) { /* eh little endian */
 				fwrite(pVals, tam, 1, arq);
 			} else { /* big endian */
-				int j = tam;
-				for (; j > 0; j--)
+				for (int j = tam; j > 0; j--)
 					fwrite(pVals + j - 1, 1, 1, arq);
 			}
 			
