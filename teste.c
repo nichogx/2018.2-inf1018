@@ -26,7 +26,7 @@ int main(void) {
 	exemplo[2].c1 = 0xcc;
 	exemplo[2].s2 = 0xdddd;
 	
-	grava_structs(3, exemplo, "ilscs", 'L', "saida1");
+	grava_structs(3, exemplo, "ilscs", 'B', "saida1");
 	
 	dump_structs("saida1");
 

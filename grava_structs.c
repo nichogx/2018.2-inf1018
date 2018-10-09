@@ -10,11 +10,12 @@
  *
  * Versionamento:
  * Autor(es)   Versao    Data       Descricao
- * ngx         0.50      2018-10-09 Limpeza do código e comentários
+ *             1.00      2018-10-09 Versao de entrega.
+ * alx, ngx    0.50      2018-10-09 Limpeza do código e comentários
  * alx         0.40      2018-09-24 Continuacao do desenvolvimento - dump_structs
  *                                  imprime o tipo endian, o tamanho do array de
  *                                  strucs e os campos das structs como esperado.
- * alx, ngx    0.30      2018-09-23 Continuacao do desenvolvimento - grava_structs
+ * ngx         0.30      2018-09-23 Continuacao do desenvolvimento - grava_structs
  *                                  funciona como esperado para LEndian e BEndian.
  * ngx         0.20      2018-09-20 Gravacao do cabecalho dos arquivos
  * ngx         0.10      2018-09-18 Inicial
@@ -114,61 +115,68 @@ void dump_structs(char *arquivo)
 
 	int i = 0; /* índice para o vetor de campos */
 	
-	unsigned char numStruct; /* número de structs da array do arquivo */
-	unsigned char endianType; /* little ou big endian */
-	unsigned char qtCampos; /* quantidade de campos da struct original */
+	unsigned char numStruct;
+	unsigned char endianType;
+	unsigned char qtCampos;
 	
 	unsigned char *vetCampo; /* vetor com os campos da struct */
 	
-	fread(&numStruct, sizeof(char), 1, arq); /* leu número de structs */
-	fread(&qtCampos, sizeof(char), 1, arq); /* leu byte do tipo endian & número de campos */
+	fread(&numStruct, sizeof(char), 1, arq); /* número de structs */
+	fread(&qtCampos, sizeof(char), 1, arq); /* byte do tipo endian & número de campos */
 	
 	endianType = qtCampos >> 7;
 	qtCampos = qtCampos & 0x7F; /* retirou o bit indicador de tipo endian */
 	
-	vetCampo = (unsigned char *) malloc((qtCampos+1)*sizeof(char)); /* define quantidade de campos para o array */
-	if(vetCampo == NULL) /* Quero conversar com o professor sobre essas linhas (128-133) */
+	vetCampo = (unsigned char *) malloc((qtCampos+1) * sizeof(char)); /* define quantidade de campos para o array */
+	if (vetCampo == NULL)
 	{
 		printf("Erro de memoria.");
 		return;
 	}
 	
-	if(endianType) /* print para tipo endian */
+	if (endianType)
 		printf("L\n");
 	else
 		printf("B\n");
 	
 	printf("%d\n", numStruct); /* print para tamanho do array */
 	
-	while(i != qtCampos) {/* grava em tpCampo os campos da struct */
+	while (i != qtCampos) {/* grava em tpCampo os campos da struct */
 		int j;
 		unsigned char campos = 0; /* byte com campos */
 		
 		fread(&campos, sizeof(char), 1, arq);
-		
-		for(j = 3; (j >= 0) && (i != qtCampos); j--) {/* grava os 4 campos armazenados em um byte até a quantidade de campos ter terminado ou o byte terminar */
+
+		/* grava os 4 campos armazenados em um byte até a quantidade 
+                   de campos ter terminado ou o byte terminar */
+		for (j = 3; (j >= 0) && (i != qtCampos); j--, i++) {
 			
-			switch(campos >> (2*j) & 0x03) { /* identifica o campo do conjunto de 2 bits verificado */
-			case 0:	vetCampo[i] = 'c'; break;
-			case 1:	vetCampo[i] = 's'; break;
-			case 2:	vetCampo[i] = 'i'; break;
-			case 3: vetCampo[i] = 'l'; break;
+			switch (campos >> (2*j) & 0x03) { /* identifica o campo do conjunto de 2 bits verificado */
+				case 0:	
+					vetCampo[i] = 'c'; 
+					break;
+				case 1:	
+					vetCampo[i] = 's'; 
+					break;
+				case 2:	
+					vetCampo[i] = 'i'; 
+					break;
+				case 3: 
+					vetCampo[i] = 'l'; 
+					break;
 			}
-			i++;
 		}
 	}
 	vetCampo[i] = '\0';
 	
-	/* Considerando que a parte anterior funcione */
-	
-	while(numStruct) /* Para cada struct, printa os campos das structs desconsiderando paddings */
+	while (numStruct) /* Para cada struct, printa os campos das structs desconsiderando paddings */
 	{
 		printf("*\n");
-		for(i = 0; i < qtCampos; i++) /* Para cada campo, verifica o seu tipo */
+		for (i = 0; i < qtCampos; i++) /* Para cada campo, verifica o seu tipo */
 		{
 			int j;
 			
-			for(j = power(2,leCampo(vetCampo[i])); j != 0; j--) /* printa todos os bytes de um campo */
+			for (j = power(2,leCampo(vetCampo[i])); j != 0; j--) /* printa todos os bytes de um campo */
 			{
 				unsigned char byte;
 				fread(&byte, sizeof(char), 1, arq);
@@ -188,6 +196,13 @@ void dump_structs(char *arquivo)
 
 /* FUNCOES ENCAPSULADAS NO MODULO */
 
+/* funcao que converte o campo de char para um inteiro
+ * de acordo com a relacao abaixo: 
+ *   c - 0
+ *   s - 1
+ *   i - 2
+ *   l - 3
+ */
 int leCampo(char c) {
 	if (c == 's')
 		return 1;
@@ -201,6 +216,9 @@ int leCampo(char c) {
 	return 0;
 }
 
+/* funcao que realiza potenciacao 
+ *   base ^ exp
+ */
 int power(int bas, int exp) {
 	int i, res = 1;
 	
