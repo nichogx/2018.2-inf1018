@@ -14,6 +14,10 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 	int line = 1;
 	int  c;
 
+	int nFuncs = 0;
+	int funcsFechadas = 0;
+	funcp *funcoes = NULL;
+
 	int tamAtual = 0;
 	unsigned char *codea = NULL;
 	unsigned char *tmp = NULL;
@@ -24,18 +28,35 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 			if (fscanf(f, "unction%c", &c0) != 1) {
 				error("comando invalido", line);
 			}
+
+			/* realoca vetor de codigo */
 			tamAtual += 4;
 			tmp = realloc(codea, tamAtual);
 			if (tmp == NULL) {
 				free(codea);
-				printf("erro de memoria\n");
-				exit(EXIT_FAILURE);
+				error("memoria insuficiente", line);
 			}
 			codea = tmp;
+
+			/* realoca vetor de enderecos das funcoes */
+			nFuncs++;
+			tmp = realloc(funcoes, nFuncs);
+			if (tmp == NULL) {
+				free(funcoes);
+				error("memoria insuficente", line);
+			}
+			funcoes = (funcp *) tmp;
+
+			/* preenche vetor de codigo */
 			codea[tamAtual - 4] = 0x55; /* push %rbp */
 			codea[tamAtual - 3] = 0x48; /* mov %rsp, %rbp */
 			codea[tamAtual - 2] = 0x89;
 			codea[tamAtual - 1] = 0xe5;
+
+			/* insere endereco da atual no final do vetor de funcoes */
+			funcoes[nFuncs - 1] = (funcp) &codea[tamAtual - 4];
+			*entry = (funcp) &codea[tamAtual - 4];
+
 			printf("function\n");
 			break;
 		}
@@ -56,11 +77,10 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 			if (var0 == '$') { /* literal */
 				unsigned char *inteiroLido = (unsigned char *) &idx0;
 				tamAtual += 10;
-				codea = realloc(codea, tamAtual);
+				tmp = realloc(codea, tamAtual);
 				if (tmp == NULL) {
 					free(codea);
-					printf("erro de memoria\n");
-					exit(EXIT_FAILURE);
+					error("memoria insuficiente", line);
 				}
 				codea = tmp;
 				codea[tamAtual - 10] = 0xb8; /* mov literal para %eax */
@@ -99,12 +119,12 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 			}
 
 			if (c0 == 'c') { /* call */
-				int f, idx1;
+				int fCall, idx1;
 				char var1;
-				if (fscanf(f, "all %d %c%d\n", &f, &var1, &idx1) != 3) {
+				if (fscanf(f, "all %d %c%d\n", &fCall, &var1, &idx1) != 3) {
 					error("comando invalido", line);
 				}
-				printf("%c%d = call %d %c%d\n", var0, idx0, f, var1, idx1);
+				printf("%c%d = call %d %c%d\n", var0, idx0, fCall, var1, idx1);
 			} else { /* operaÃ§Ã£o aritmÃ©tica */
 				int idx1, idx2;
 				char var1 = c0, var2, op;
@@ -122,30 +142,10 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 		line ++;
 		fscanf(f, " ");
 	}
-	return;
-}
-
-void gera_codigo2(void **code, funcp *entry) {
-	unsigned char *codea = malloc(14);
-	*entry = (funcp) codea;
-	codea[0] = 0x55;
-	codea[1] = 0x48;
-	codea[2] = 0x89;
-	codea[3] = 0xe5;
-	codea[4] = 0xb8;
-	codea[5] = 0x64;
-	codea[6] = 0x00;
-	codea[7] = 0x00;
-	codea[8] = 0x00;
-	codea[9] = 0x48;
-	codea[10] = 0x89;
-	codea[11] = 0xec;
-	codea[12] = 0x5d;
-	codea[13] = 0xc3;
-
-	/* passa o array usado para o parametro recebido,
-	para ser liberado fora */
+	
 	*code = codea;
+
+	return;
 }
 
 void libera_codigo(void *p) {
