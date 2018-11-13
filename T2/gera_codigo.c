@@ -1,6 +1,13 @@
+#include <stdio.h>
 #include <stdlib.h>
+#include<string.h>
 
 typedef int (*funcp)(int x);
+
+static void error(const char *msg, int line) {
+	fprintf(stderr, "erro %s na linha %d\n", msg, line);
+	exit(EXIT_FAILURE);
+}
 
 void gera_codigo(FILE *f, void **code, funcp *entry)
 {
@@ -80,12 +87,33 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 		line ++;
 		fscanf(myfp, " ");
 	}
-	return 0;
+	return;
 }
 
-void gera_codigo2(void **code, funcp *entry) {
-	*code = malloc(14);
-	entry = code + 1;
+void gera_codigo2(void **codigo, funcp *entry) {
+	unsigned char code[] = { 0x83, 0xc7, 0x01, 0x89, 0xf8, 0xc3 };
+	//unsigned char *code = malloc(6);
+	*entry = (funcp) code;/*
+	code[0] = 0x55;
+	code[1] = 0x48;
+	code[2] = 0x89;
+	code[3] = 0xe5;
+	code[4] = 0xb8;
+	code[5] = 0x64;
+	code[6] = 0x00;
+	code[7] = 0x00;
+	code[8] = 0x00;
+	code[9] = 0x48;
+	code[10] = 0x89;
+	code[11] = 0xec;
+	code[12] = 0x5d;
+	code[13] = 0xc3;*//*
+	code[0] = 0x83;
+	code[1] = 0xc7;
+	code[2] = 0x01;
+	code[3] = 0x89;
+	code[4] = 0xf8;
+	code[5] = 0xc3;*/
 }
 
 void libera_codigo(void *p) {}
