@@ -15,7 +15,8 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 	int  c;
 
 	int tamAtual = 0;
-	unsigned char *codea = malloc(tamAtual);
+	unsigned char *codea = NULL;
+	unsigned char *tmp = NULL;
 	while ((c = fgetc(f)) != EOF) {
 		switch (c) {
 		case 'f': { /* function */
@@ -23,6 +24,18 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 			if (fscanf(f, "unction%c", &c0) != 1) {
 				error("comando invalido", line);
 			}
+			tamAtual += 4;
+			tmp = realloc(codea, tamAtual);
+			if (tmp == NULL) {
+				free(codea);
+				printf("erro de memoria\n");
+				exit(EXIT_FAILURE);
+			}
+			codea = tmp;
+			codea[tamAtual - 4] = 0x55; /* push %rbp */
+			codea[tamAtual - 3] = 0x48; /* mov %rsp, %rbp */
+			codea[tamAtual - 2] = 0x89;
+			codea[tamAtual - 1] = 0xe5;
 			printf("function\n");
 			break;
 		}
@@ -39,6 +52,32 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 			char var0, var1;
 			if (fscanf(f, "et %c%d", &var0, &idx0) != 2) {
 				error("comando invalido", line);
+			}
+			if (var0 == '$') { /* literal */
+				unsigned char *inteiroLido = (unsigned char *) &idx0;
+				tamAtual += 10;
+				codea = realloc(codea, tamAtual);
+				if (tmp == NULL) {
+					free(codea);
+					printf("erro de memoria\n");
+					exit(EXIT_FAILURE);
+				}
+				codea = tmp;
+				codea[tamAtual - 10] = 0xb8; /* mov literal para %eax */
+				codea[tamAtual - 9]  = inteiroLido[0];
+				codea[tamAtual - 8]  = inteiroLido[1];
+				codea[tamAtual - 7]  = inteiroLido[2];
+				codea[tamAtual - 6]  = inteiroLido[3];
+
+				/* reestabelece a pilha e retorna */
+				codea[tamAtual - 5] = 0x48; /* mov %rbp, %rsp */
+				codea[tamAtual - 4] = 0x89;
+				codea[tamAtual - 3] = 0xec;
+				codea[tamAtual - 2] = 0x5d; /* pop %rbp */
+				codea[tamAtual - 1] = 0xc3; /* ret */
+
+			} else if (var0 == 'v') { /* variavel */
+				
 			}
 			printf("ret %c%d\n", var0, idx0);
 			break;
@@ -109,4 +148,6 @@ void gera_codigo2(void **code, funcp *entry) {
 	*code = codea;
 }
 
-void libera_codigo(void *p) {}
+void libera_codigo(void *p) {
+	free(p);
+}
