@@ -25,21 +25,27 @@ static unsigned char *insere(unsigned char *dest, unsigned char *valores,
 
 	unsigned char *tmp = NULL;
 
+	/* atualiza tamanho do vetor */
 	(*tamAtual) += qtd;
+
+	/* realoca um novo vetor */
 	tmp = realloc(dest, *tamAtual);
 	if (tmp == NULL) {
 		free(dest);
 		error("memoria insuficiente", -1);
 	}
 
+	/* adiciona no vetor novo */
 	for (int i = 0; i < qtd; i++) {
 		tmp[*tamAtual - (qtd - i)] = valores[i];
 	}
 
+	/* atualiza vetor de endereco das funcoes */
 	for (int i = 0; i < nFuncs; i++) {
 		funcoes[i] = funcoes[i] + (tmp - dest);
 	}
 
+	/* tmp eh o vetor novo (o antigo ja foi freeado pela realloc */
 	return tmp;
 }
 
