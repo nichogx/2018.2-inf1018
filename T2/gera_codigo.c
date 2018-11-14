@@ -57,10 +57,11 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 	int nFuncs = 0;
 	int funcsFechadas = 0;
 	funcp *funcoes = NULL;
+	/* vetor que segura o endereco inicial de todas as
+	funcoes */
 
 	int tamAtual = 0;
 	unsigned char *codea = NULL;
-	unsigned char *tmp = NULL;
 	while ((c = fgetc(f)) != EOF) {
 		switch (c) {
 		case 'f': { /* function */
@@ -71,14 +72,15 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 
 			/* preenche vetor de codigo */
 			unsigned char vals[] = {
-				0x55, /* push %rbp */
-				0x48, 0x89, 0xe5, /* mov %rsp, %rbp */
+				0x55,                  /* push %rbp */
+				0x48, 0x89, 0xe5,      /* mov %rsp, %rbp */
 				0x48, 0x83, 0xec, 0x20 /* sub $32, %rsp */
 			};
 			codea = insere(codea, vals, 8, &tamAtual, funcoes, nFuncs);
 
 			/* realoca vetor de enderecos das funcoes */
 			nFuncs++;
+			funcp *tmp = NULL;
 			tmp = realloc(funcoes, nFuncs);
 			if (tmp == NULL) {
 				free(funcoes);
@@ -130,8 +132,8 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 			/* reestabelece a pilha e retorna */
 			unsigned char vals[] = {
 				0x48, 0x89, 0xec, /* mov %rbp, %rsp */
-				0x5d, /* pop %rbp */
-				0xc3  /* ret */
+				0x5d,             /* pop %rbp */
+				0xc3              /* ret */
 			};
 			codea = insere(codea, vals, 5, &tamAtual, funcoes, nFuncs);
 				
@@ -144,7 +146,6 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 			if (fscanf(f, "ret %c%d %c%d", &var0, &idx0, &var1, &idx1) != 4) {
 				error("comando invalido", line);
 			}
-
 			
 
 			printf("zret %c%d %c%d\n", var0, idx0, var1, idx1);
@@ -251,7 +252,12 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 		error("numero de ends nao corresponde ao numero de functions", -1);
 	}
 
+	/* coloca o vetor de codigo no ponteiro
+	recebido por referencia */
 	*code = codea;
+
+	/* seta a ultima funcao como entrada
+	e libera o vetor das funcoes */
 	*entry = (funcp) funcoes[nFuncs - 1];
 	free(funcoes);
 	
