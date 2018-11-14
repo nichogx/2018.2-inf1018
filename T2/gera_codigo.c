@@ -144,6 +144,9 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 			if (fscanf(f, "ret %c%d %c%d", &var0, &idx0, &var1, &idx1) != 4) {
 				error("comando invalido", line);
 			}
+
+			
+
 			printf("zret %c%d %c%d\n", var0, idx0, var1, idx1);
 			break;
 		}
@@ -250,6 +253,7 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 
 	*code = codea;
 	*entry = (funcp) funcoes[nFuncs - 1];
+	free(funcoes);
 	
 	return;
 }
