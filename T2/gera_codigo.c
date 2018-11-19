@@ -391,7 +391,7 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 		printf("%02x ", codea[i]);
 	} printf("\n");
 	for (int i = 0; i < tamAtual; i++) {
-		if (codea[i] == 0xe8 && codea[i + 1] < 10) {
+		if (codea[i] == 0xe8 && codea[i + 1] <= 10) {
 			unsigned int fAChamar = codea[i + 1]; /* numero da funcao a ser chamada */
 			unsigned int a = ((unsigned int) codea[i + 2]);
 			unsigned int b = ((unsigned int) codea[i + 3]) << 8;
