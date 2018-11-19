@@ -14,10 +14,10 @@ int main(void) {
 	if (f == NULL) exit(1);
 
 	gera_codigo(f, &cd, &entry);
-	printf("%d\n", (*entry)(10));
+	printf("%d\n", (*entry)(0));
 	for (int i = 0; ((unsigned char *) entry)[i] != 0xc3; i++) {
 		printf("%02x ", ((unsigned char *) entry)[i]);
-	} printf("\n");
+	} printf("c3 \n");
 	libera_codigo(cd);
 
 	return 0;
