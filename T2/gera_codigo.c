@@ -168,7 +168,7 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 					nFuncs); /* insere instrucao */
 				codea = insere(codea, inteiroLido, 4, &tamAtual, funcoes,
 					nFuncs); /* insere literal */
-				codea = insere(codea, compara, 6, &tamAtual, funcoes,
+				codea = insere(codea, compara, 4, &tamAtual, funcoes,
 					nFuncs);
 			} else if (var0 == 'v') { /* variavel */
 				unsigned char vals[] = {
@@ -176,12 +176,12 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 					0x0, 0x0, 0x0, 0x0
 				};
 
-				codea = insere(codea, vals, 9, &tamAtual, funcoes, nFuncs);
+				codea = insere(codea, vals, 7, &tamAtual, funcoes, nFuncs);
 			} else if (var0 == 'p' && idx0 == 0) { /* parm */
 				unsigned char vals[] = {
 					0x83, 0xff, 0x0 /* cmpl $0, %edi */
 				};
-				codea = insere(codea, vals, 5, &tamAtual, funcoes, nFuncs);
+				codea = insere(codea, vals, 3, &tamAtual, funcoes, nFuncs);
 			} else {
 				error("comando invalido", line);
 			}
