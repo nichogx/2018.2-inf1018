@@ -266,10 +266,27 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 					}
 					codea = insere(codea, caller, 1, &tamAtual, funcoes,
 							nFuncs); /* insere chamada */
-					codea = insere(codea, (unsigned char *)funcoes[fCall], 4, &tamAtual, funcoes,
+
+					/* no final eh editado esse numero */
+					/* assume que tamAtual caiba em 3 bytes */
+					unsigned char diff[] = {
+						fCall, 
+						*((unsigned char *) (&tamAtual)),
+						*((unsigned char *) (&tamAtual) + 1),
+						*((unsigned char *) (&tamAtual) + 2)
+					};
+					printf("\n\n%ld %d\n\n", (unsigned char *)funcoes[fCall] - (unsigned char *)(&codea[tamAtual]), tamAtual);
+
+					codea = insere(codea, diff, 4, &tamAtual, funcoes,
 							nFuncs); /* insere funcao */
 					codea = insere(codea, retiraParmPilha, 3, &tamAtual, funcoes,
 							nFuncs); /* insere retirada de parametro da pilha */
+
+					/* move de eax para a variavel atribuida */
+					unsigned char vals[] = {
+						0x89, 0x45, 0xe0 + 4 * idx0 /* mover o valor de %eax para vi */
+					};
+					codea = insere(codea, vals, 3, &tamAtual, funcoes, nFuncs);
 				} else {
 					error("comando invalido", line);
 				}
@@ -368,6 +385,30 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 		free(codea);
 		error("numero de ends nao corresponde ao numero de functions", -1);
 	}
+
+	/* linka calls */
+	for (int i = 0; i < tamAtual; i++) {
+		printf("%02x ", codea[i]);
+	} printf("\n");
+	for (int i = 0; i < tamAtual; i++) {
+		if (codea[i] == 0xe8) {
+			unsigned int fAChamar = codea[i + 1]; /* numero da funcao a ser chamada */
+			unsigned int a = ((unsigned int) codea[i + 2]);
+			unsigned int b = ((unsigned int) codea[i + 3]) << 8;
+			unsigned int c = ((unsigned int) codea[i + 4]) << 16;
+			unsigned int posVetRet =  a | b | c; /* posicao em codea a retornar depois */
+			int diff = (unsigned char *)funcoes[fAChamar] - (unsigned char *)(&codea[posVetRet]);
+			codea[i + 1] = *((unsigned char *) (&diff));
+			codea[i + 2] = *((unsigned char *) (&diff) + 1);
+			codea[i + 3] = *((unsigned char *) (&diff) + 2);
+			codea[i + 4] = *((unsigned char *) (&diff) + 3);
+
+			i += 4;
+		}
+	}
+	for (int i = 0; i < tamAtual; i++) {
+		printf("%02x ", codea[i]);
+	} printf("\n");
 
 	/* coloca o vetor de codigo no ponteiro
 	recebido por referencia */
