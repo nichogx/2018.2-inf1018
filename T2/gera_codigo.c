@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include<string.h>
+#include <string.h>
 
 typedef int (*funcp)(int x);
 
@@ -11,18 +11,18 @@ static void error(const char *msg, int line)
 }
 
 /* essa funcao gerencia as insercoes e os reallocs no vetor de codigo.
-	recebe:
-		dest: vetor antigo de codigo
-		valores: vetor de codigo a inserir no final
-		qtd: tamanho do vetor valores
-		tamAtual: endereco da variavel que guarda o tamanho de dest
-		funcoes: o vetor que guarda o endereco das funcoes (para ser
-				 atualizado com os novos enderecos)
-		nFuncs: tamanho do vetor funcoes
-	retorna:
-		o novo enderco do vetor que guarda o codigo */
+recebe:
+dest: vetor antigo de codigo
+valores: vetor de codigo a inserir no final
+qtd: tamanho do vetor valores
+tamAtual: endereco da variavel que guarda o tamanho de dest
+funcoes: o vetor que guarda o endereco das funcoes (para ser
+atualizado com os novos enderecos)
+nFuncs: tamanho do vetor funcoes
+retorna:
+o novo enderco do vetor que guarda o codigo */
 static unsigned char *insere(unsigned char *dest, unsigned char *valores,
-                             int qtd, int *tamAtual, funcp *funcoes, int nFuncs)
+	int qtd, int *tamAtual, funcp *funcoes, int nFuncs)
 {
 
 	unsigned char *tmp = NULL;
@@ -95,7 +95,7 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 
 			printf("function\n");
 			break;
-		}
+				  }
 		case 'e': { /* end */
 			char c0;
 			if (fscanf(f, "nd%c", &c0) != 1) {
@@ -104,7 +104,7 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 			funcsFechadas++;
 			printf("end\n");
 			break;
-		}
+				  }
 		case 'r': {  /* retorno incondicional */
 			int idx0 = 0;
 			char var0;
@@ -118,9 +118,9 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 					0xb8 /* mov literal para %eax */
 				};
 				codea = insere(codea, instr, 1, &tamAtual, funcoes,
-				               nFuncs); /* insere instrucao */
+					nFuncs); /* insere instrucao */
 				codea = insere(codea, inteiroLido, 4, &tamAtual, funcoes,
-				               nFuncs); /* insere literal */
+					nFuncs); /* insere literal */
 			} else if (var0 == 'v') { /* variavel */
 				unsigned char vals[] = {
 					0x8b, 0x45, 0xe0 + 4 * idx0 /* seta o valor de vi em %edx */
@@ -145,7 +145,7 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 
 			printf("ret %c%d\n", var0, idx0);
 			break;
-		}
+				  }
 		case 'z': {  /* retorno condicional */
 			int idx0, idx1;
 			char var0, var1;
@@ -153,10 +153,78 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 				error("comando invalido", line);
 			}
 
+			if (var0 == '$') { /* literal */
+				unsigned char *inteiroLido = (unsigned char *) &idx0;
+				unsigned char instr[] = {
+					0x41, 0xba /* mov literal para %r10d */
+				};
+				unsigned char compara[] = {
+					0x41, 0x83, 0xfa, 0x0 /* cmpl $0, %r10d */
+				};
+				codea = insere(codea, instr, 2, &tamAtual, funcoes,
+					nFuncs); /* insere instrucao */
+				codea = insere(codea, inteiroLido, 4, &tamAtual, funcoes,
+					nFuncs); /* insere literal */
+				codea = insere(codea, compara, 6, &tamAtual, funcoes,
+					nFuncs);
+			} else if (var0 == 'v') { /* variavel */
+				unsigned char vals[] = {
+					0x81, 0x7d, 0xe0 + 4 * idx0, /* cmpl $0, valor de vi */
+					0x0, 0x0, 0x0, 0x0
+				};
+
+				codea = insere(codea, vals, 9, &tamAtual, funcoes, nFuncs);
+			} else if (var0 == 'p' && idx0 == 0) { /* parm */
+				unsigned char vals[] = {
+					0x83, 0xff, 0x0 /* cmpl $0, %edi */
+				};
+				codea = insere(codea, vals, 5, &tamAtual, funcoes, nFuncs);
+			} else {
+				error("comando invalido", line);
+			}
+
+			if (var1 == '$') { /* literal */
+				unsigned char *inteiroLido = (unsigned char *) &idx1;
+				unsigned char instr = {
+					0x75, 0x07,				/* jne endif */
+					0xb8					/* mov literal para %eax */
+				};
+				unsigned char fim  = {
+					0xc9, 0xc3				/* jmp end (leave) */
+				};
+				codea = insere(codea, instr, 3, &tamAtual, funcoes,
+					nFuncs); /* insere instrucao */
+				codea = insere(codea, inteiroLido, 4, &tamAtual, funcoes,
+					nFuncs); /* insere literal */
+				codea = insere(codea, fim, 2, &tamAtual, funcoes,
+					nFuncs); /* insere jump */
+			} else if (var1 == 'v') { /* variavel */
+				unsigned char vals[] = {
+					0x75, 0x05,					/* jne endif */
+					0x8b, 0x45, 0xe0 + 4 * idx1 /* seta o valor de vi em %eax */
+				};
+				unsigned char fim  = {
+					0xc9, 0xc3				/* jmp end (leave) */
+				};
+				codea = insere(codea, vals, 5, &tamAtual, funcoes, nFuncs);
+				codea = insere(codea, fim, 2, &tamAtual, funcoes, nFuncs);
+			} else if (var1 == 'p' && idx1 == 0) { /* parm */
+				unsigned char vals[] = {
+					0x75, 0x04,				/* jne endif */
+					0x89, 0xf8				/* mov %edi, %eax */
+				};
+				unsigned char fim  = {
+					0xc9, 0xc3				/* jmp end (leave) */
+				};
+				codea = insere(codea, vals, 4, &tamAtual, funcoes, nFuncs);
+				codea = insere(codea, fim, 2, &tamAtual, funcoes, nFuncs);
+			} else {
+				error("comando invalido", line);
+			}
 
 			printf("zret %c%d %c%d\n", var0, idx0, var1, idx1);
 			break;
-		}
+				  }
 		case 'v': {  /* atribuicao */
 			int idx0;
 			char var0 = c, c0;
@@ -168,6 +236,38 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 				int fCall, idx1;
 				char var1;
 				if (fscanf(f, "all %d %c%d\n", &fCall, &var1, &idx1) != 3) {
+					error("comando invalido", line);
+				}
+				if (fCall >= 0)
+				{
+					unsigned char salvaParmPilha = {
+						0x89, 0x7d, 0xe8			/* movl %edi, -24(%rbp) */
+					};
+					unsigned char retiraParmPilha = {
+						0x8b, 0x7d, 0xe8			/* movl -24(%rbp), %edi */
+					};
+					codea = insere(codea, salvaParmPilha, 3, &tamAtual, funcoes,
+							nFuncs); /* insere salvamento de parametro na pilha */
+					if (var1 == '$')
+					{
+						unsigned char *inteiroLido = (unsigned char *) &idx1;
+						unsigned char instr = {
+							0xbf					/* mov literal para %edi */
+						};
+						codea = insere(codea, instr, 1, &tamAtual, funcoes,
+							nFuncs); /* insere instrucao */
+						codea = insere(codea, inteiroLido, 4, &tamAtual, funcoes,
+							nFuncs); /* insere literal */
+					} else if (var1 == 'v')
+					{
+					} else if (var1 == 'p')
+					{
+					} else {
+						error("comando invalido", line);
+					}
+					codea = insere(codea, retiraParmPilha, 3, &tamAtual, funcoes,
+							nFuncs); /* insere retirada de parametro da pilha */
+				} else {
 					error("comando invalido", line);
 				}
 				printf("%c%d = call %d %c%d\n", var0, idx0, fCall, var1, idx1);
@@ -185,9 +285,9 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 						0xbe /* mov literal para %esi */
 					};
 					codea = insere(codea, instr, 1, &tamAtual, funcoes,
-					               nFuncs); /* insere instrucao */
+						nFuncs); /* insere instrucao */
 					codea = insere(codea, inteiroLido, 4, &tamAtual, funcoes,
-					               nFuncs); /* insere literal */
+						nFuncs); /* insere literal */
 				} else if (var1 == 'v') { /* variavel */
 					unsigned char vals[] = {
 						0x8b, 0x75, 0xe0 + 4 * idx1 /* seta o valor de vi em %esi */
@@ -209,9 +309,9 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 						0xba /* mov literal para %edx */
 					};
 					codea = insere(codea, instr, 1, &tamAtual, funcoes,
-					               nFuncs); /* insere instrucao */
+						nFuncs); /* insere instrucao */
 					codea = insere(codea, inteiroLido, 4, &tamAtual, funcoes,
-					               nFuncs); /* insere literal */
+						nFuncs); /* insere literal */
 				} else if (var2 == 'v') { /* variavel */
 					unsigned char vals[] = {
 						0x8b, 0x55, 0xe0 + 4 * idx2 /* seta o valor de vi em %edx */
@@ -250,10 +350,10 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 				codea = insere(codea, vals, 3, &tamAtual, funcoes, nFuncs);
 
 				printf("%c%d = %c%d %c %c%d\n",
-				       var0, idx0, var1, idx1, op, var2, idx2);
+					var0, idx0, var1, idx1, op, var2, idx2);
 			}
 			break;
-		}
+				  }
 		default:
 			error("comando desconhecido", line);
 		}
