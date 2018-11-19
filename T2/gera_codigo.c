@@ -149,6 +149,9 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 		case 'z': {  /* retorno condicional */
 			int idx0, idx1;
 			char var0, var1;
+			unsigned char fim[]  = {
+					0xc9, 0xc3				/* leave e ret */
+				};
 			if (fscanf(f, "ret %c%d %c%d", &var0, &idx0, &var1, &idx1) != 4) {
 				error("comando invalido", line);
 			}
@@ -185,42 +188,30 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 
 			if (var1 == '$') { /* literal */
 				unsigned char *inteiroLido = (unsigned char *) &idx1;
-				unsigned char instr = {
+				unsigned char instr[] = {
 					0x75, 0x07,				/* jne endif */
 					0xb8					/* mov literal para %eax */
-				};
-				unsigned char fim  = {
-					0xc9, 0xc3				/* jmp end (leave) */
 				};
 				codea = insere(codea, instr, 3, &tamAtual, funcoes,
 					nFuncs); /* insere instrucao */
 				codea = insere(codea, inteiroLido, 4, &tamAtual, funcoes,
 					nFuncs); /* insere literal */
-				codea = insere(codea, fim, 2, &tamAtual, funcoes,
-					nFuncs); /* insere jump */
 			} else if (var1 == 'v') { /* variavel */
 				unsigned char vals[] = {
 					0x75, 0x05,					/* jne endif */
 					0x8b, 0x45, 0xe0 + 4 * idx1 /* seta o valor de vi em %eax */
 				};
-				unsigned char fim  = {
-					0xc9, 0xc3				/* jmp end (leave) */
-				};
 				codea = insere(codea, vals, 5, &tamAtual, funcoes, nFuncs);
-				codea = insere(codea, fim, 2, &tamAtual, funcoes, nFuncs);
 			} else if (var1 == 'p' && idx1 == 0) { /* parm */
 				unsigned char vals[] = {
 					0x75, 0x04,				/* jne endif */
 					0x89, 0xf8				/* mov %edi, %eax */
 				};
-				unsigned char fim  = {
-					0xc9, 0xc3				/* jmp end (leave) */
-				};
 				codea = insere(codea, vals, 4, &tamAtual, funcoes, nFuncs);
-				codea = insere(codea, fim, 2, &tamAtual, funcoes, nFuncs);
 			} else {
 				error("comando invalido", line);
 			}
+			codea = insere(codea, fim, 2, &tamAtual, funcoes, nFuncs); /* insere leave e ret */
 
 			printf("zret %c%d %c%d\n", var0, idx0, var1, idx1);
 			break;
@@ -240,62 +231,43 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 				}
 				if (fCall >= 0)
 				{
-					unsigned char salvaParmPilha = {
-						0x89, 0x7d, 0xe8			/* movl %edi, -24(%rbp) */
+					unsigned char salvaParmPilha[] = {
+						0x89, 0x7d, 0xf4			/* movl %edi, -12(%rbp) */
 					};
-					unsigned char retiraParmPilha = {
-						0x8b, 0x7d, 0xe8			/* movl -24(%rbp), %edi */
+					unsigned char retiraParmPilha[] = {
+						0x8b, 0x7d, 0xf4			/* movl -12(%rbp), %edi */
 					};
+					unsigned char caller[] = {
+							0xe8						/* call function */
+						};
 					codea = insere(codea, salvaParmPilha, 3, &tamAtual, funcoes,
 							nFuncs); /* insere salvamento de parametro na pilha */
 					if (var1 == '$')
 					{
 						unsigned char *inteiroLido = (unsigned char *) &idx1;
-						unsigned char instr = {
+						unsigned char instr[] = {
 							0xbf					/* mov literal para %edi */
 						};
-						unsigned char caller[] = {
-							0xe8						/* call function */
-						};
+						
 						codea = insere(codea, instr, 1, &tamAtual, funcoes,
 							nFuncs); /* insere instrucao */
 						codea = insere(codea, inteiroLido, 4, &tamAtual, funcoes,
 							nFuncs); /* insere literal */
-						codea = insere(codea, caller, 1, &tamAtual, funcoes,
-							nFuncs); /* insere instrucao */
-						codea = insere(codea, funcoes[fCall], 4, &tamAtual, funcoes,
-							nFuncs); /* insere instrucao */
 					} else if (var1 == 'v')
 					{
 						unsigned char vals[] = {
-							0x8b, 0x45, 0xe0 + 4 * idx1 /* seta o valor de vi em %eax */ /* alterar para %edi */
-						};
-						unsigned char caller[] = {
-							0xe8						/* call function */
+							0x8b, 0x7d, 0xe0 + 4 * idx1 /* seta o valor de vi em %edi */
 						};
 						codea = insere(codea, vals, 3, &tamAtual, funcoes,
 							nFuncs); /* insere instrucao */
-						codea = insere(codea, caller, 1, &tamAtual, funcoes,
-							nFuncs); /* insere instrucao */
-						codea = insere(codea, funcoes[fCall], 4, &tamAtual, funcoes,
-							nFuncs); /* insere instrucao */
-					} else if (var1 == 'p')
+					} else if (var1 != 'p')
 					{
-						unsigned char vals[] = {
-							0x89, 0xf8				/* mov %edi, %eax */ /* alterar para %edi */
-						};
-						unsigned char caller[] = {
-							0xe8						/* call function */
-						};
-						codea = insere(codea, vals, 2, &tamAtual, funcoes,
-							nFuncs); /* insere instrucao */
-						codea = insere(codea, caller, 1, &tamAtual, funcoes,
-							nFuncs); /* insere instrucao */
-						codea = insere(codea, funcoes[fCall], 4, &tamAtual, funcoes,
-							nFuncs); /* insere instrucao */
-					} else {
 						error("comando invalido", line);
 					}
+					codea = insere(codea, caller, 1, &tamAtual, funcoes,
+							nFuncs); /* insere chamada */
+					codea = insere(codea, (unsigned char *)funcoes[fCall], 4, &tamAtual, funcoes,
+							nFuncs); /* insere funcao */
 					codea = insere(codea, retiraParmPilha, 3, &tamAtual, funcoes,
 							nFuncs); /* insere retirada de parametro da pilha */
 				} else {
