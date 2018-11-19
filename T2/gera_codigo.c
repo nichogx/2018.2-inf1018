@@ -254,14 +254,45 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 						unsigned char instr = {
 							0xbf					/* mov literal para %edi */
 						};
+						unsigned char caller[] = {
+							0xe8						/* call function */
+						};
 						codea = insere(codea, instr, 1, &tamAtual, funcoes,
 							nFuncs); /* insere instrucao */
 						codea = insere(codea, inteiroLido, 4, &tamAtual, funcoes,
 							nFuncs); /* insere literal */
+						codea = insere(codea, caller, 1, &tamAtual, funcoes,
+							nFuncs); /* insere instrucao */
+						codea = insere(codea, funcoes[fCall], 4, &tamAtual, funcoes,
+							nFuncs); /* insere instrucao */
 					} else if (var1 == 'v')
 					{
+						unsigned char vals[] = {
+							0x8b, 0x45, 0xe0 + 4 * idx1 /* seta o valor de vi em %eax */ /* alterar para %edi */
+						};
+						unsigned char caller[] = {
+							0xe8						/* call function */
+						};
+						codea = insere(codea, vals, 3, &tamAtual, funcoes,
+							nFuncs); /* insere instrucao */
+						codea = insere(codea, caller, 1, &tamAtual, funcoes,
+							nFuncs); /* insere instrucao */
+						codea = insere(codea, funcoes[fCall], 4, &tamAtual, funcoes,
+							nFuncs); /* insere instrucao */
 					} else if (var1 == 'p')
 					{
+						unsigned char vals[] = {
+							0x89, 0xf8				/* mov %edi, %eax */ /* alterar para %edi */
+						};
+						unsigned char caller[] = {
+							0xe8						/* call function */
+						};
+						codea = insere(codea, vals, 2, &tamAtual, funcoes,
+							nFuncs); /* insere instrucao */
+						codea = insere(codea, caller, 1, &tamAtual, funcoes,
+							nFuncs); /* insere instrucao */
+						codea = insere(codea, funcoes[fCall], 4, &tamAtual, funcoes,
+							nFuncs); /* insere instrucao */
 					} else {
 						error("comando invalido", line);
 					}
