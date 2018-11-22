@@ -236,7 +236,8 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 				  }
 		case 'v': {  /* atribuicao */
 			int idx0;
-			char var0 = c, c0;
+			char c0;
+
 			if (fscanf(f, "%d = %c", &idx0, &c0) != 2) {
 				error("comando invalido", line);
 			}
@@ -318,7 +319,7 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 					error("comando invalido", line);
 				}
 				#ifdef _DEBUG
-				printf("%c%d = call %d %c%d\n", var0, idx0, fCall, var1, idx1);
+				printf("%c%d = call %d %c%d\n", c, idx0, fCall, var1, idx1);
 				#endif
 			} else { /* operacao aritmetica */
 				int idx1 = 0, idx2 = 0;
@@ -399,7 +400,7 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 				codea = insere(codea, vals, 3, &tamAtual, funcoes, nFuncs);
 				#ifdef _DEBUG
 				printf("%c%d = %c%d %c %c%d\n",
-					var0, idx0, var1, idx1, op, var2, idx2);
+					c, idx0, var1, idx1, op, var2, idx2);
 				#endif
 			}
 			break;
