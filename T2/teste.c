@@ -14,11 +14,17 @@ int main(void) {
 	if (f == NULL) exit(1);
 
 	gera_codigo(f, &cd, &entry);
-	int a = (*entry)(5);
-	printf("%d\n", a);
+
+	#ifdef _DEBUG
+	printf("FUNCAO DE ENTRADA:\n");
 	for (int i = 0; ((unsigned char *) entry)[i] != 0xc3 && i < 100; i++) {
 		printf("%02x ", ((unsigned char *) entry)[i]);
-	} printf("c3 \n");
+	} printf("c3 \n\n");
+	#endif
+
+	int a = (*entry)(6);
+	printf("Retorno: %d\n", a);
+
 	libera_codigo(cd);
 
 	return 0;

@@ -62,8 +62,17 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 	/* vetor que segura o endereco inicial de todas as
 	funcoes */
 
+	int nCalls = 0;
+	int *calls = NULL;
+	/* vetor que segura a posicao dos calls */
+
 	int tamAtual = 0;
 	unsigned char *codea = NULL;
+
+	#ifdef _DEBUG
+	printf("CODIGO LIDO: \n");
+	#endif
+
 	while ((c = fgetc(f)) != EOF) {
 		switch (c) {
 		case 'f': { /* function */
@@ -93,7 +102,9 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 			/* insere endereco da atual no final do vetor de funcoes */
 			funcoes[nFuncs - 1] = (funcp) &codea[tamAtual - 8];
 
+			#ifdef _DEBUG
 			printf("function\n");
+			#endif
 			break;
 				  }
 		case 'e': { /* end */
@@ -102,7 +113,10 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 				error("comando invalido", line);
 			}
 			funcsFechadas++;
+
+			#ifdef _DEBUG
 			printf("end\n");
+			#endif
 			break;
 				  }
 		case 'r': {  /* retorno incondicional */
@@ -143,7 +157,9 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 			};
 			codea = insere(codea, vals, 5, &tamAtual, funcoes, nFuncs);
 
+			#ifdef _DEBUG
 			printf("ret %c%d\n", var0, idx0);
+			#endif
 			break;
 				  }
 		case 'z': {  /* retorno condicional */
@@ -213,7 +229,9 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 			}
 			codea = insere(codea, fim, 2, &tamAtual, funcoes, nFuncs); /* insere leave e ret */
 
+			#ifdef _DEBUG
 			printf("zret %c%d %c%d\n", var0, idx0, var1, idx1);
+			#endif
 			break;
 				  }
 		case 'v': {  /* atribuicao */
@@ -265,17 +283,26 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 						error("comando invalido", line);
 					}
 					codea = insere(codea, caller, 1, &tamAtual, funcoes,
-							nFuncs); /* insere chamada */
+							nFuncs); /* insere chamada (0xE8) */
 
 					/* no final eh editado esse numero */
 					/* assume que tamAtual caiba em 3 bytes */
 					unsigned char diff[] = {
 						fCall, 
-						*((unsigned char *) (&tamAtual)),
-						*((unsigned char *) (&tamAtual) + 1),
-						*((unsigned char *) (&tamAtual) + 2)
+						0x00, 0x00, 0x00
 					};
-					printf("\n\n%ld %d\n\n", (unsigned char *)funcoes[fCall] - (unsigned char *)(&codea[tamAtual]), tamAtual);
+
+					/* realoca vetor de posicao de calls */
+					nCalls++;
+					int *tmp = NULL;
+					tmp = realloc(calls, nCalls);
+					if (tmp == NULL) {
+						free(calls);
+						error("memoria insuficente", line);
+					}
+					calls = tmp;
+
+					calls[nCalls - 1] = tamAtual - 1;
 
 					codea = insere(codea, diff, 4, &tamAtual, funcoes,
 							nFuncs); /* insere funcao */
@@ -290,7 +317,9 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 				} else {
 					error("comando invalido", line);
 				}
+				#ifdef _DEBUG
 				printf("%c%d = call %d %c%d\n", var0, idx0, fCall, var1, idx1);
+				#endif
 			} else { /* operacao aritmetica */
 				int idx1 = 0, idx2 = 0;
 				char var1 = c0, var2, op;
@@ -368,9 +397,10 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 					0x89, 0x75, 0xe0 + 4 * idx0 /* mover o valor de %esi para vi */
 				};
 				codea = insere(codea, vals, 3, &tamAtual, funcoes, nFuncs);
-
+				#ifdef _DEBUG
 				printf("%c%d = %c%d %c %c%d\n",
 					var0, idx0, var1, idx1, op, var2, idx2);
+				#endif
 			}
 			break;
 				  }
@@ -387,28 +417,29 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 	}
 
 	/* linka calls */
+	#ifdef _DEBUG
+	printf("\nCODIGO ANTES DA LINKAGEM:\n");
 	for (int i = 0; i < tamAtual; i++) {
 		printf("%02x ", codea[i]);
 	} printf("\n");
-	for (int i = 0; i < tamAtual; i++) {
-		if (codea[i] == 0xe8 && codea[i + 1] <= 10) {
-			unsigned int fAChamar = codea[i + 1]; /* numero da funcao a ser chamada */
-			unsigned int a = ((unsigned int) codea[i + 2]);
-			unsigned int b = ((unsigned int) codea[i + 3]) << 8;
-			unsigned int c = ((unsigned int) codea[i + 4]) << 16;
-			unsigned int posVetRet =  a | b | c; /* posicao em codea a retornar depois */
-			int diff = (unsigned char *)funcoes[fAChamar] - (unsigned char *)(&codea[posVetRet]);
-			codea[i + 1] = *((unsigned char *) (&diff));
-			codea[i + 2] = *((unsigned char *) (&diff) + 1);
-			codea[i + 3] = *((unsigned char *) (&diff) + 2);
-			codea[i + 4] = *((unsigned char *) (&diff) + 3);
+	#endif
 
-			i += 4;
-		}
+	for (int i = 0; i < nCalls; i++) {
+		int cl = calls[i];
+		unsigned int fAChamar = codea[cl + 1]; /* numero da funcao a ser chamada */
+		int diff = (unsigned char *)funcoes[fAChamar] - (unsigned char *)(&codea[cl + 1]) - 4;
+		codea[cl + 1] = *((unsigned char *) (&diff));
+		codea[cl + 2] = *((unsigned char *) (&diff) + 1);
+		codea[cl + 3] = *((unsigned char *) (&diff) + 2);
+		codea[cl + 4] = *((unsigned char *) (&diff) + 3);
 	}
+
+	#ifdef _DEBUG
+	printf("\nCODIGO DEPOIS DA LINKAGEM:\n");
 	for (int i = 0; i < tamAtual; i++) {
 		printf("%02x ", codea[i]);
-	} printf("\n");
+	} printf("\n\n");
+	#endif
 
 	/* coloca o vetor de codigo no ponteiro
 	recebido por referencia */
@@ -418,6 +449,9 @@ void gera_codigo(FILE *f, void **code, funcp *entry)
 	e libera o vetor das funcoes */
 	*entry = (funcp) funcoes[nFuncs - 1];
 	free(funcoes);
+
+	/* libera vetor auxiliar dos calls */
+	free(calls);
 
 	return;
 }
