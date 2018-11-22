@@ -11,16 +11,16 @@ static void error(const char *msg, int line)
 }
 
 /* essa funcao gerencia as insercoes e os reallocs no vetor de codigo.
-recebe:
-dest: vetor antigo de codigo
-valores: vetor de codigo a inserir no final
-qtd: tamanho do vetor valores
-tamAtual: endereco da variavel que guarda o tamanho de dest
-funcoes: o vetor que guarda o endereco das funcoes (para ser
-atualizado com os novos enderecos)
-nFuncs: tamanho do vetor funcoes
-retorna:
-o novo enderco do vetor que guarda o codigo */
+	recebe:
+		dest: vetor antigo de codigo
+		valores: vetor de codigo a inserir no final
+		qtd: tamanho do vetor valores
+		tamAtual: endereco da variavel que guarda o tamanho de dest
+		funcoes: o vetor que guarda o endereco das funcoes (para ser
+		atualizado com os novos enderecos)
+		nFuncs: tamanho do vetor funcoes
+	retorna:
+		o novo enderco do vetor que guarda o codigo */
 static unsigned char *insere(unsigned char *dest, unsigned char *valores,
 	int qtd, int *tamAtual, funcp *funcoes, int nFuncs)
 {

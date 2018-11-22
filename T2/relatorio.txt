@@ -1,0 +1,19 @@
+﻿INTEGRANTES:
+Nicholas de Godoy Xavier        1710878  3WA
+Alexandre Augusto Poggio Heine  1711905  3WA
+
+FUNCIONAMENTO:
+	A função gera_código funciona corretamente em todos os testes realizados.
+	A função libera_código também não apresentou erros ou imprevistos.
+
+COMPILAÇÃO:
+	O programa, para efeito de testes, foi compilado com o comando (teste.c contém a main):
+
+		gcc -Wall -o saida -Wa,--execstack gera_codigo.c teste.c 
+	
+	Se o programa for compilado com a opção -D_DEBUG no gcc, mensagens de
+	auxílio a debug são apresentadas ao executar.
+
+TESTES:
+	Os testes realizados foram:
+
