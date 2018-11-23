@@ -50,3 +50,23 @@ p0 = p0 - $1
 zret v1 p0
 ret v2
 end
+
+* Erros propositais
+
+function
+zret $0
+ret $1
+end
+
+functiont
+ret $1
+end
+
+function
+end
+
+function
+ret p0
+v0 = $0
+ret v0
+end
