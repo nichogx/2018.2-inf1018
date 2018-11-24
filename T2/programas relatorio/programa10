@@ -1,0 +1,4 @@
+function
+p0 = p0 + p0
+ret p0
+end

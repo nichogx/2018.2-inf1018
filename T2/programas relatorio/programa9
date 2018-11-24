@@ -1,0 +1,4 @@
+function
+p0 = $1 + $1
+ret p0
+end

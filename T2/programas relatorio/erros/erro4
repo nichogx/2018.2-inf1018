@@ -1,0 +1,5 @@
+function
+ret p0
+v0 = $0
+ret v0
+end

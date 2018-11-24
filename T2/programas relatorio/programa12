@@ -1,0 +1,5 @@
+function
+v0 = $-1
+p0 = $1 + v0 
+ret p0
+end
