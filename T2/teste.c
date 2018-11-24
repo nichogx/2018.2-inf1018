@@ -10,7 +10,7 @@ int main(void) {
 	void *cd;
 	funcp entry;
 	
-	FILE *f = fopen("programas/programa5", "r");
+	FILE *f = fopen("programas/programa7", "r");
 	if (f == NULL) exit(1);
 
 	gera_codigo(f, &cd, &entry);
