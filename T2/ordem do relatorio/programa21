@@ -1,4 +1,4 @@
 function
 v0 = $0 + $0
-zret v0 p0
+zret v0 $1
 end
