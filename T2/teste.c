@@ -11,7 +11,7 @@ int main(void) {
 	funcp entry;
 	int numTestes;
 	char padrao[9] = "programa";
-	printf("Digite o número de testes que deseja fazer: ");
+	printf("Digite o numero de testes que deseja fazer: ");
 	scanf("%d",&numTestes);
 	while ( numTestes >= 0 )
 	{
