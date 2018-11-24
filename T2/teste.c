@@ -9,8 +9,8 @@ void libera_codigo(void *p);
 int main(void) {
 	void *cd;
 	funcp entry;
-
-	FILE *f = fopen("programa", "r");
+	
+	FILE *f = fopen("programas/programa5", "r");
 	if (f == NULL) exit(1);
 
 	gera_codigo(f, &cd, &entry);
@@ -22,7 +22,7 @@ int main(void) {
 	} printf("c3 \n\n");
 	#endif
 
-	int a = (*entry)(6);
+	int a = (*entry)(5);
 	printf("Retorno: %d\n", a);
 
 	libera_codigo(cd);
