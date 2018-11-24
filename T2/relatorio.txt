@@ -16,20 +16,38 @@ COMPILAÇÃO:
 
 TESTES:
 	Os testes realizados foram:
+	
 	- Teste cujo único comando da função era retorno de um valor literal (dado no enunciado).
 		- Esse teste verifica se a função consegue fazer retorno de valores literais.
+		
 	- Teste cujo único comando da função era retorno de um variável.
 		- Esse teste verifica se a função consegue fazer retorno de variáveis.
+		
 	- Teste cujo único comando da função é um retorno de um parâmetro.
 		- Esse teste verifica se a função consegue fazer retorno de parâmetros.
-	- Teste que atribui a uma variável a soma de dois valores literais e retorna esse valor.
+		
+	- Teste que atribui a uma variável a soma de dois valores literais positivos e retorna esse valor.
 		- Esse teste verifica se o operador de soma funciona corretamente.
 		- Ele também verifica se é possível atribuir a uma variável um valor vindo de 
 		  uma operação entre dois valores literais.
 		- Por último, verifica se é possível retornar uma variável.
+		
+	- Teste que atribui a uma variável a soma de dois valores literais, um positivo e um negativo, e retorna esse valor.
+		- Esse teste verifica se é possível atribuir a uma variável o valor vindo de uma
+		  operação em que há um valor literal negativo.
+		
 	- Teste que atribui a uma variável a soma de um parâmetro e um valor literal e retorna esse valor.
 		- Esse teste verifica se é possível atribuir a uma variável um valor vindo de 
 		  uma operação entre um literal e um parâmetro.
+		  
 	- Teste que atribui a uma variável a soma de dois parâmetros e retorna esse valor.
 		- Esse teste verifica se é possível atribuir a uma variável um valor vindo de 
 		  uma operação entre dois parâmetros.
+		  
+	- Teste que atribui a uma variável a multiplicação de dois valores literais e retorna esse valor.
+		- Esse teste verifica se o operador de multiplicação funciona corretamente.
+		  
+	- Teste que atribui a uma variável a diferença de um parâmetro e um valor literal e retorna esse valor.
+		- Esse teste verifica se o operador de diferença funciona corretamente.
+		
+	- Teste 
