@@ -1,0 +1,5 @@
+function
+v0 = $2 - $-5
+v1 = v0 * p0
+ret v1
+end

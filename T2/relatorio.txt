@@ -17,116 +17,116 @@ COMPILAÇÃO:
 TESTES:
 	Os testes realizados foram:
 	
-	- Teste cujo único comando da função é o retorno incondicional de um valor literal (dado no enunciado).
+	1- Teste cujo único comando da função é o retorno incondicional de um valor literal (dado no enunciado).
 		- Esse teste verifica se a função consegue fazer retorno de valores literais.
 		- Também verifica que o programa funciona caso não haja variáveis locais.
 		
-	- Teste cujo único comando da função o retorno incondicional de um parâmetro.
+	2- Teste cujo único comando da função o retorno incondicional de um parâmetro.
 		- Esse teste verifica se a função consegue fazer retorno de parâmetros.
 		
-	- Teste que atribui a uma variável a soma de dois valores literais positivos e retorna, por um retorno incondicional, 
+	3- Teste que atribui a uma variável a soma de dois valores literais positivos e retorna, por um retorno incondicional, 
 	  essa variável.
 		- Esse teste verifica se o operador de soma funciona corretamente.
 		- Ele também verifica se é possível atribuir a uma variável um valor vindo de 
 		  uma operação entre dois valores literais.
 		- Por último, verifica se é possível retornar uma variável.
 		
-	- Teste que atribui a uma variável a soma de dois valores literais, um positivo e um negativo.
+	4- Teste que atribui a uma variável a soma de dois valores literais, um positivo e um negativo.
 		- Esse teste verifica se é possível atribuir a uma variável o valor vindo de uma
 		  operação em que há um valor literal negativo.
 	
-	- Teste que atribui a uma variável a soma de dois valores literais negativos.
+	5- Teste que atribui a uma variável a soma de dois valores literais negativos.
 		- Esse teste verifica se é possível atribuir a uma variável o valor vindo de uma
 		  operação entre dois valores literais negativos.
 		
-	- Teste que atribui a uma variável a soma de um parâmetro e um valor literal.
+	6- Teste que atribui a uma variável a soma de um parâmetro e um valor literal.
 		- Esse teste verifica se é possível atribuir a uma variável um valor vindo de 
 		  uma operação entre um literal e um parâmetro.
 		  
-	- Teste que atribui a uma variável a soma de dois parâmetros.
+	7- Teste que atribui a uma variável a soma de dois parâmetros.
 		- Esse teste verifica se é possível atribuir a uma variável um valor vindo de 
 		  uma operação entre dois parâmetros.
 		  
-	- Teste que atribui a uma variável a multiplicação de dois valores literais.
+	8- Teste que atribui a uma variável a multiplicação de dois valores literais.
 		- Esse teste verifica se o operador de multiplicação funciona corretamente.
 		  
-	- Teste que atribui a uma variável a diferença de um parâmetro e um valor literal.
+	9- Teste que atribui a uma variável a diferença de um parâmetro e um valor literal.
 		- Esse teste verifica se o operador de diferença funciona corretamente.
 	
-	- Teste que atribui a uma variável v1 a soma da variável v0 com ela mesma.
+	10- Teste que atribui a uma variável v1 a soma da variável v0 com ela mesma.
 		- Esse teste verifica se pode ser atribuida a uma variável o valor da operação entre duas outras
 		  variáveis.
 		
-	- Teste que atribui a uma variável v1 a diferença de uma variável v0 com um valor literal.
+	11- Teste que atribui a uma variável v1 a diferença de uma variável v0 com um valor literal.
 		- Esse teste verifica se pode ser atribuida a uma variável o valor de uma operação entre uma 
 		  variável e um valor literal.
 		  
-	- Teste que atribui a uma variável v1 a multiplicação de uma variável v0 com um parâmetro.
+	12- Teste que atribui a uma variável v1 a multiplicação de uma variável v0 com um parâmetro.
 		- Esse teste verifica se pode ser atribuida a uma variável o valor da operação entre uma variável
 		  e um parâmetro.
 	
-	- Teste que utiliza todas as cinco variáveis para operações diversas.
+	13- Teste que utiliza todas as cinco variáveis para operações diversas.
 		- O teste utiliza as cinco variáveis para testar se no caso máximo de variáveis o programa funciona
 		  como deveria.
 	
-	- Teste que utiliza os 10 dígitos de números para valores literais.
+	14- Teste que utiliza os 10 dígitos de números para valores literais.
 		- O teste verifica se todos os 10 dígitos são considerados válidos pelo programa.
 	
-	- Teste que utiliza um valor literal com o valor máximo do tipo int na linguagem C.
+	15- Teste que utiliza um valor literal com o valor máximo do tipo int na linguagem C.
 		- O teste verifica se é possível utilizar valores literais com vários dígitos.
 		- Ele também checa se o programa funciona para o caso de inteiro de maior valor do tipo int permitido pela 
 		  linguagem C.
 		  
-	- Teste que utiliza um valor literal com o valor mínimo do tipo int na linguagem C.
+	16- Teste que utiliza um valor literal com o valor mínimo do tipo int na linguagem C.
 		- O teste checa se o programa funciona para o caso de inteiro de menor valor do tipo int permitido pela 
 		  linguagem C.
 		  
-	- Teste que utiliza o retorno condicional com o primeiro valor igual a uma valor literal 0 e o segundo valor
+	17- Teste que utiliza o retorno condicional com o primeiro valor igual a uma valor literal 0 e o segundo valor
 	  igual a um valor literal 1.
 		- Verifica se o programa retorna um valor diferente do primeiro valor do zret.
 		- Verifica que o zret retorna um valor literal.
 		
-	- Teste que utiliza o retorno condicional com o primeiro valor igual a uma valor literal 0 e o segundo valor
+	18- Teste que utiliza o retorno condicional com o primeiro valor igual a uma valor literal 0 e o segundo valor
 	  igual a um valor literal 0.
 	  - Verifica que o programa retorna um valor com o mesmo valor do primeiro valor.
 	  
-	- Teste que utiliza o retorno condicional com o primeiro valor igual a uma valor literal 0 e o segundo valor
+	19- Teste que utiliza o retorno condicional com o primeiro valor igual a uma valor literal 0 e o segundo valor
 	  igual a uma variável.
 		- Verifica que o zret retorna uma variável.
 	  
-	- Teste que utiliza o retorno condicional com o primeiro valor igual a uma valor literal 0 e o segundo valor
+	20- Teste que utiliza o retorno condicional com o primeiro valor igual a uma valor literal 0 e o segundo valor
 	  igual a um parâmetro.
 		- Verifica que o programa retorna um parâmetro.
 	  
-	- Teste que utiliza o retorno condicional com o primeiro valor igual a uma variável de valor 0 e o segundo valor
+	21- Teste que utiliza o retorno condicional com o primeiro valor igual a uma variável de valor 0 e o segundo valor
 	  igual a um valor literal.
 		- Verifica que o programa retorna o valor literal, pois a variável, que está no primeiro valor, tem valor igual a 0.
 	
-	- Teste que utiliza o retorno condicional com o primeiro valor igual a uma variável de valor 0 e o segundo valor
+	22- Teste que utiliza o retorno condicional com o primeiro valor igual a uma variável de valor 0 e o segundo valor
 	  igual a um parâmetro.
 		- Verifica que o programa retorna o parâmetro, pois a variável, que está no primeiro valor, tem valor igual a 0.
 		
-	- Teste que utiliza o retorno condicional com o primeiro valor igual a uma variável v0 de valor 0 e o segundo valor
+	23- Teste que utiliza o retorno condicional com o primeiro valor igual a uma variável v0 de valor 0 e o segundo valor
 	  igual a uma variável v1.
 		- Verifica que o programa retorna a variável v1, pois a variável v0, que está no primeiro valor, tem valor igual a 0.
 	
-	- Teste que utiliza o retorno condicional com o primeiro valor igual a um parâmetro e o segundo valor
+	24- Teste que utiliza o retorno condicional com o primeiro valor igual a um parâmetro e o segundo valor
 	  igual a um valor literal.
 		- Verifica que o programa retorna o valor literal quando o parâmetro é igual a 0 e que, caso o parâmetro seja
 		  diferente de 0, prossegue até o próximo retorno.
 	
-	- Teste que utiliza o retorno condicional com o primeiro valor igual a uma variável de valor 1.
+	25- Teste que utiliza o retorno condicional com o primeiro valor igual a uma variável de valor 1.
 		- Verifica que o programa prossegue até o próximo retorno quando o primeiro valor é uma variável de valor 1.
 	
-	- Teste que utiliza o retorno condicional com o primeiro valor igual a um valor literal de valor 1.
+	26- Teste que utiliza o retorno condicional com o primeiro valor igual a um valor literal de valor 1.
 		- Verifica que o programa prossegue até o próximo retorno quando o primeiro valor é um valor literal de valor 1.
 	
-	- Teste que utiliza a chamada de funções múltiplas vezes para atribuir o valor do retorno dessas funções a uma variável.
+	27- Teste que utiliza a chamada de funções múltiplas vezes para atribuir o valor do retorno dessas funções a uma variável.
 		- Verifica se o retorno das funções é passado para a variável.
 		- Também verifica se é possível atribuir uma chamada a uma variável
 		
-	- Teste que utiliza a chamada da própria função para checar uma chamada recursiva.
+	28- Teste que utiliza a chamada da própria função para checar uma chamada recursiva.
 		- Verifica se uma função pode chamar a ela mesma.
 	
-	- Teste que utiliza apenas algumas das funções implementadas.
+	29- Teste que utiliza apenas algumas das funções implementadas.
 		- Verifica que não há erros em chamar funções anteriores que não a primeira anterior.
