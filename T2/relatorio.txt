@@ -49,5 +49,9 @@ TESTES:
 		  
 	- Teste que atribui a uma variável a diferença de um parâmetro e um valor literal e retorna esse valor.
 		- Esse teste verifica se o operador de diferença funciona corretamente.
-		
-	- Teste 
+	
+	- Teste que atribui a uma variável v1 a soma de v0 com v0 e retorna v1.
+		- Esse teste verifica se pode ser atribuida a uma variável o valor da soma de outras duas variáveis.
+	
+	- Teste que utiliza todas as cinco variáveis para operações diversas.
+		- 
