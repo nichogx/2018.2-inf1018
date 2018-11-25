@@ -8,6 +8,7 @@ FUNCIONAMENTO:
 	O limite de variáveis permitidas é cinco.
 	O limite de funções permitidas é vinte.
 	O limite de usos de chamadas (call) é vinte (recursões contam como um único uso).
+	O código recebido não poderá ocupar mais de 1000 bytes.
 
 COMPILAÇÃO:
 	O programa, para efeito de testes, foi compilado com o comando (teste.c contém a main):
