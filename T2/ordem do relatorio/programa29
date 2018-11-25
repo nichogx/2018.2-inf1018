@@ -1,0 +1,63 @@
+function
+ret $2018
+end
+function
+v0 = p0 + p0
+ret v0
+end
+function
+v0 = call 1 $0
+ret v0
+end
+function
+v0 = call 2 $0
+ret v0
+end
+function
+v0 = call 3 $0
+ret v0
+end
+function
+v0 = call 4 $0
+ret v0
+end
+function
+v0 = call 1 p0
+ret v0
+end
+function
+v0 = call 6 $0
+ret v0
+end
+function
+v0 = call 7 $0
+ret v0
+end
+function
+v0 = call 8 $0
+ret v0
+end
+function
+v0 = call 6 p0
+ret v0
+end
+function
+v0 = call 10 $0
+ret v0
+end
+function
+v0 = call 11 $0
+ret v0
+end
+function
+v0 = call 10 p0
+ret v0
+end
+function
+v0 = call 13 $0
+ret v0
+end
+function
+v0 = call 13 p0
+ret v0
+end

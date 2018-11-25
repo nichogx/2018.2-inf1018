@@ -13,7 +13,7 @@ int main(void) {
 	char padrao[9] = "programa";
 	printf("Digite o numero de testes que deseja fazer: ");
 	scanf("%d",&numTestes);
-	while ( numTestes >= 0 )
+	while ( numTestes > 0 )
 	{
 		char * novo;
 		if(numTestes < 10)

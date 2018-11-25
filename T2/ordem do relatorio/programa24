@@ -1,0 +1,4 @@
+function
+zret p0 $1
+ret $0
+end
