@@ -1,4 +1,5 @@
 function
 v0 = $0 + $1
 zret v0 v0
+ret $0
 end
